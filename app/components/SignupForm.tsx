@@ -109,7 +109,7 @@ const SignupForm = () => {
             </form>
             <div className='mt-3'>
                 <p className='text-sm'>
-                    Already have an account? <Link href='/auth/login' className='text-sm underline'>Login</Link>
+                    Already have an account? <Link href='/login' className='text-sm underline'>Login</Link>
                 </p>
             </div>
             <section className='mt-5 '>

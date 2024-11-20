@@ -81,7 +81,7 @@ const LoginForm = () => {
                 </Button>
                 <div className='mt-3'>
                     <p className='text-sm'>
-                        Don't have an account? <Link href='/auth/signup' className='text-sm underline'>Signup</Link>
+                        Don't have an account? <Link href='/signup' className='text-sm underline'>Signup</Link>
                     </p>
                 </div>
                 <section className='mt-5 '>

@@ -17,34 +17,109 @@ datasource db {
 model User {
   id              Int           @id @default(autoincrement())
   name            String
+  username        String        @unique
   email           String        @unique
   password        String
-  roleId          Int           @unique
-  role            Role       @relation(fields: [roleId], references: [id])
   userDetailId    Int           @unique
   detail          UserDetail    @relation(fields: [userDetailId], references: [id])
+  memberGroup     MemberGroup[]
+  groupOwner      Group[]
   createdAt       DateTime      @default(now())
 
-  @@index([roleId])
   @@index([userDetailId])
 }
 
 model UserDetail {
-  id          Int @id @default(autoincrement())
-  prodi       String
-  university  String
-  semester    Int
-  birthdayDate  DateTime
-  country     String
-  city        String
-  fullAddress String
-  postalCode  Int
-  user        User?
-  createdAt   DateTime @default(now())
+  id                Int               @id @default(autoincrement())
+  status            UserStatus        @default(STUDENT)
+  country           String
+  city              String
+  fullAddress       String
+  postalCode        Int
+  user              User?
+
+  detailStudentId   Int?              @unique
+  detailStudent     DetailStudent?    @relation(fields: [detailStudentId], references: [id])
+
+  detailWorkerId    Int?              @unique
+  detailWorker      DetailWorker?     @relation(fields: [detailWorkerId], references: [id])
+  createdAt         DateTime          @default(now())
+
+  @@index([detailStudentId])
+  @@index([detailWorkerId])
 }
 
-model Role {
-  id      Int   @id @default(autoincrement())
-  role    String
-  user    User[]
+enum UserStatus {
+  STUDENT
+  WORKER
 }
+
+model DetailStudent {
+  id            Int     @id
+  university    String
+  prodi         String
+  semester      Int
+  userDetail    UserDetail?
+}
+
+model DetailWorker {
+  id          Int       @id
+  job         String
+  company     String
+  userDetail  UserDetail?
+}
+
+
+
+model Group {
+  id            Int           @id @default(autoincrement())
+  groupOwnerId  Int
+  groupOwner    User          @relation(fields: [groupOwnerId], references: [id])
+  name          String
+  description   String
+  tags          String[]
+  members       MemberGroup[]
+  createdAt     DateTime      @default(now())
+
+  @@index([groupOwnerId])
+}
+
+model MemberGroup {
+  id            Int        @id @default(autoincrement())
+  roleGroup     RoleGroup  @default(MEMBER)
+  role          String
+  userId        Int
+  user          User       @relation(fields: [userId], references: [id])
+  groupId       Int
+  group         Group      @relation(fields: [groupId], references: [id])
+  task          Task[]
+  createdAt     DateTime   @default(now())
+
+  @@index([userId])
+  @@index([groupId])
+}
+
+enum RoleGroup {
+  ADMIN
+  MEMBER
+}
+
+model Task {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String
+  status      TaskStatus
+  assigneeId  Int
+  assignee    MemberGroup     @relation(fields: [assigneeId], references: [id])
+  review      String
+  createdAt   DateTime        @default(now())
+}
+
+enum TaskStatus {
+  ToDo
+  InProgress
+  InReview
+  Revision
+  Done
+}
+
