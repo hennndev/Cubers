@@ -15,7 +15,7 @@ import {
 } from "@/app/components/ui/sidebar"
 import Link from 'next/link'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu'
-import { LuChevronDown, LuChevronUp, LuUser2 } from 'react-icons/lu'
+import { LuChevronsUpDown, LuChevronUp, LuUser2, LuCodesandbox } from 'react-icons/lu'
 
 
 
@@ -23,13 +23,21 @@ const SidebarComponent = () => {
 
     return (
         <Sidebar>
-            <SidebarHeader>
+            <SidebarHeader className='mb-3'>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                Select Workspace
-                            <LuChevronDown className="ml-auto" />
-                            </SidebarMenuButton>
+                        <SidebarMenuButton className='py-6'>
+                            <section className='flexx space-x-2'>
+                                <div className='bg-black rounded-xl p-2 flex-center'>
+                                    <LuCodesandbox className='text-white text-2xl'/>
+                                </div>
+                                <section className='flex flex-col space-y-1'>
+                                    <h1 className='text-[15px] font-semibold'>Cubers Inc</h1>
+                                    <p className='text-[13px]'>Dashboard</p>
+                                </section>
+                            </section>
+                            <LuChevronsUpDown className="ml-auto" />
+                        </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>

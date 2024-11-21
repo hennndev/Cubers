@@ -3,10 +3,15 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { Loader2 } from "lucide-react"
 import { useForm } from 'react-hook-form'
 import { FiLock, FiUnlock } from "react-icons/fi"
 import { RiGoogleFill } from 'react-icons/ri'
+import { SignupSchema } from '@/schemas/auth'
+import { useRouter } from 'next/navigation'
+import * as zod from "zod"
+import { signup } from '@/lib/actions/auth/signup'
+import { signIn } from 'next-auth/react'
+import { LuAlertTriangle, LuX, LuLoader2 } from 'react-icons/lu'
 
 type FormTypes = {
     name: string
@@ -15,34 +20,71 @@ type FormTypes = {
 }
 
 const SignupForm = () => {
+    const [isError, setIsError] = useState<null | string>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
-    const { register, formState: {errors}, handleSubmit } = useForm<FormTypes>({
+    const { register, formState: {errors}, handleSubmit } = useForm<zod.infer<typeof SignupSchema>>({
         defaultValues: {
             name: '',
             email: '',
             password: ''
         }
     })
-    const onSubmit = async (values: FormTypes) => {
+    const onSubmit = async (values: zod.infer<typeof SignupSchema>) => {
         setIsLoading(true)
+        setIsError(null)
+        try {
+            const res = await signup(values)
+            if(res && res.error) {
+                throw res.error
+            }
+        } catch (error: any) {
+            setIsError(error as string)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const loginGoogle = async () => {
+        await signIn("google", {
+            callbackUrl: "/group"
+        })
     }
 
     return (
-        <section className='w-[400px] pt-10 pb-10'>
+        <section className='w-[550px] pt-10 pb-10'>
             <h1 className='text-3xl font-bold tracking-tight text-back'>Signup</h1>
+            {isError && <section className='flexx relative mt-4 -mb-2 text-white font-normal bg-destructive rounded-lg p-3'>
+                <LuAlertTriangle className='text-lg mr-2'/>
+                {isError}
+                <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsError(null)}/>
+            </section>}
             <form onSubmit={handleSubmit(onSubmit)} className='mt-5 flex flex-col'>
-                <section className='flex flex-col space-y-1.5 mb-3'>
-                    <label htmlFor="name" className='text-base'>Name</label>
-                    <Input 
-                        {...register('name', {
-                            required: 'This field is required',
-                        })}
-                        type='text' 
-                        placeholder='Input your name'/>
-                    {errors.name && (
-                        <small className='text-destructive text-sm !mt-2'>{errors.name.message}</small>
-                    )}
+                <section className='flexx space-x-3'>
+                    <section className='flex flex-col space-y-1.5 mb-3 flex-1'>
+                        <label htmlFor="name" className='text-base'>Name</label>
+                        <Input 
+                            {...register('name', {
+                                required: 'This field is required',
+                            })}
+                            type='text' 
+                            placeholder='Input your name'/>
+                        {errors.name && (
+                            <small className='text-destructive text-sm !mt-2'>{errors.name.message}</small>
+                        )}
+                    </section>
+                    <section className='flex flex-col space-y-1.5 mb-3 flex-1'>
+                        <label htmlFor="name" className='text-base'>Username</label>
+                        <Input 
+                            {...register('name', {
+                                required: 'This field is required',
+                            })}
+                            type='text' 
+                            placeholder='Input your name'/>
+                        {errors.name && (
+                            <small className='text-destructive text-sm !mt-2'>{errors.name.message}</small>
+                        )}
+                    </section>
                 </section>
                 <section className='flex flex-col space-y-1.5 mb-3'>
                     <label htmlFor="email" className='text-base'>Email</label>
@@ -60,7 +102,7 @@ const SignupForm = () => {
                         <small className='text-destructive text-sm !mt-2'>{errors.email.message}</small>
                     )}
                 </section>
-                <section className='flex flex-col space-y-1.5 mb-5'>
+                <section className='flex flex-col space-y-1.5 mb-5 flex-1'>
                     <label htmlFor="password" className='text-base'>Password</label>
                     <div className='flexx space-x-3'>
                         <Input 
@@ -81,7 +123,7 @@ const SignupForm = () => {
                         <small className='text-destructive text-sm !mt-2'>{errors.password.message}</small>
                     )}
                 </section>
-                <section className='flex flex-col space-y-1.5 mb-5'>
+                <section className='flex flex-col space-y-1.5 mb-5 flex-1'>
                     <label htmlFor="password" className='text-base'>Password Confirm</label>
                     <div className='flexx space-x-3'>
                         <Input 
@@ -103,7 +145,7 @@ const SignupForm = () => {
                     )}
                 </section>
                 <Button type='submit' disabled={isLoading ? true: false}>
-                    {isLoading && <Loader2 className="animate-spin" />}
+                    {isLoading && <LuLoader2 className="animate-spin" />}
                     {isLoading ? 'Waiting' : 'Submit'}
                 </Button>
             </form>

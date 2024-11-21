@@ -10,7 +10,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/app/components/ui/table"
-import { Button } from '../ui/button'
+import { Button } from '@/app/components/ui/button'
    
   const groups = [
     {

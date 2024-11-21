@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
-import { Input } from '../ui/input'
-import { Textarea } from '../ui/textarea'
+import { Input } from '@/app/components/ui/input'
+import { Textarea } from '@/app/components/ui/textarea'
 import {
     Select,
     SelectContent,
@@ -12,7 +12,7 @@ import {
     SelectValue,
   } from "@/app/components/ui/select"
 import { useForm } from 'react-hook-form'
-import { Button } from '../ui/button'
+import { Button } from '@/app/components/ui/button'
 
 type FormTypes = {
     name: string
@@ -34,7 +34,7 @@ const GroupForm = () => {
         <section className=''>
             <form>
                 <section className='flex flex-col space-y-1.5 mb-5'>
-                    <label htmlFor="name" className='text-base'>Name</label>
+                    <label htmlFor="name" className='text-base'>Name <span className='text-red-500'>*</span></label>
                     <Input 
                         {...register('name', {
                             required: 'This field is required',
@@ -46,7 +46,7 @@ const GroupForm = () => {
                     )}
                 </section>
                 <section className='flex flex-col space-y-1.5 mb-5'>
-                    <label htmlFor="name" className='text-base'>Level</label>
+                    <label htmlFor="name" className='text-base'>Level <span className='text-red-500'>*</span></label>
                     <Select>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a group level" />
@@ -62,7 +62,7 @@ const GroupForm = () => {
                     </Select>
                 </section>
                 <section className='flex flex-col space-y-1.5 mb-5'>
-                    <label htmlFor="name" className='text-base'>Description</label>
+                    <label htmlFor="name" className='text-base'>Description <span className='text-red-500'>*</span></label>
                     <Textarea 
                         {...register('name', {
                             required: 'This field is required',

@@ -1,36 +1,66 @@
 "use client"
 import React, { useState } from 'react'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
-import { useForm } from 'react-hook-form'
-import { FiLock, FiUnlock } from "react-icons/fi"
+import * as zod from 'zod'
 import Link from 'next/link'
-import { Checkbox } from './ui/checkbox'
+import { signIn } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
 import { LuLoader2 } from "react-icons/lu"
+import { useRouter } from 'next/navigation'
+import { LoginSchema } from '@/schemas/auth'
 import { RiGoogleFill } from "react-icons/ri"
+import { FiLock, FiUnlock } from "react-icons/fi"
+import { Input } from '@/app/components/ui/input'
+import { Button } from '@/app/components/ui/button'
+import { Checkbox } from '@/app/components/ui/checkbox'
+import { LuAlertTriangle, LuX } from "react-icons/lu"
 
-
-type FormTypes = {
-    email: string
-    password: string
-}
 
 const LoginForm = () => {
+    const router = useRouter()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
-    const { register, formState: {errors}, handleSubmit } = useForm<FormTypes>({
+    const [isError, setIsError] = useState<null | string>(null)
+    const { register, formState: {errors}, handleSubmit } = useForm<zod.infer<typeof LoginSchema>>({
         defaultValues: {
             email: '',
             password: ''
         }
     })
-    const onSubmit = async (values: FormTypes) => {
+    const onSubmit = async (values: zod.infer<typeof LoginSchema>) => {
         setIsLoading(true)
+        setIsError(null)
+        try {
+            const res = await signIn("credentials", {
+                email: values.email,
+                password: values.password,
+                redirect: false
+            })
+            if(res && !res.ok) {
+                throw res.error
+            } else {
+                router.push("/group")
+            }
+        } catch (error: any) {
+            setIsError(error as string)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const loginGoogle = async () => {
+        await signIn("google", {
+            callbackUrl: "/group"
+        })
     }
 
     return (
         <section className='w-[400px]'>
             <h1 className='text-3xl font-bold tracking-tight text-back'>Login</h1>
+            {isError && <section className='flexx relative mt-4 -mb-2 text-white font-normal bg-destructive rounded-lg p-3'>
+                <LuAlertTriangle className='text-lg mr-2'/>
+                {isError}
+                <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsError(null)}/>
+            </section>}
             <form onSubmit={handleSubmit(onSubmit)} className='mt-5 flex flex-col'>
                 <section className='flex flex-col space-y-1.5 mb-3'>
                     <label htmlFor="email" className='text-base'>Email</label>
@@ -85,7 +115,7 @@ const LoginForm = () => {
                     </p>
                 </div>
                 <section className='mt-5 '>
-                    <Button type='button' className='w-full' variant='outline'>
+                    <Button type='button' className='w-full' variant='outline' onClick={loginGoogle}>
                         <RiGoogleFill/> Login with Google
                     </Button>
                 </section>
