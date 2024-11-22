@@ -7,7 +7,7 @@ import { SignupSchema } from "@/schemas/auth"
 
 export const signup = async (values: zod.infer<typeof SignupSchema>) => {
     try {
-        const fields = SignupSchema.parse(values)
+        const {passwordConfirm, ...fields} = SignupSchema.parse(values)
         const userEmail = await prisma.user.findUnique({
             where: {
                 email: fields.email

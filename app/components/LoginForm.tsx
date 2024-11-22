@@ -11,8 +11,16 @@ import { RiGoogleFill } from "react-icons/ri"
 import { FiLock, FiUnlock } from "react-icons/fi"
 import { Input } from '@/app/components/ui/input'
 import { Button } from '@/app/components/ui/button'
-import { Checkbox } from '@/app/components/ui/checkbox'
+import { zodResolver } from "@hookform/resolvers/zod"
 import { LuAlertTriangle, LuX } from "react-icons/lu"
+import { Checkbox } from '@/app/components/ui/checkbox'
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+  } from "@/app/components/ui/form"
 
 
 const LoginForm = () => {
@@ -20,7 +28,8 @@ const LoginForm = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [isError, setIsError] = useState<null | string>(null)
-    const { register, formState: {errors}, handleSubmit } = useForm<zod.infer<typeof LoginSchema>>({
+    const form = useForm<zod.infer<typeof LoginSchema>>({
+        resolver: zodResolver(LoginSchema),
         defaultValues: {
             email: '',
             password: ''
@@ -61,65 +70,60 @@ const LoginForm = () => {
                 {isError}
                 <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsError(null)}/>
             </section>}
-            <form onSubmit={handleSubmit(onSubmit)} className='mt-5 flex flex-col'>
-                <section className='flex flex-col space-y-1.5 mb-3'>
-                    <label htmlFor="email" className='text-base'>Email</label>
-                    <Input 
-                        {...register('email', {
-                            required: 'This field is required',
-                            pattern: {
-                                value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                                message: 'Email not valid'
-                            }
-                        })}
-                        type='text' 
-                        placeholder='Input your email'/>
-                    {errors.email && (
-                        <small className='text-destructive text-sm !mt-2'>{errors.email.message}</small>
-                    )}
-                </section>
-                <section className='flex flex-col space-y-1.5 mb-5'>
-                    <label htmlFor="password" className='text-base'>Password</label>
-                    <div className='flexx space-x-3'>
-                        <Input 
-                            {...register('password', {
-                                required: 'This field is required',
-                                minLength: {
-                                    value: 6,
-                                    message: 'Minimum password length is 6 characters'
-                                }
-                            })}
-                            type={showPassword ? 'text' : 'password'} 
-                            placeholder='Input your password'/>
-                        <div className='rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors md:text-sm h-9 flex-center cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
-                            {!showPassword ? <FiLock className='text-base'/> : <FiUnlock className='text-base'/>}
-                        </div>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='mt-5 flex flex-col'>
+                    <FormField 
+                        control={form.control}
+                        name="email"
+                        render={({field}) => (
+                            <FormItem className='flex flex-col space-y-1.5 mb-3'>
+                                <label htmlFor="email" className='text-base'>Email <span className='text-destructive'>*</span></label>
+                                <FormControl>
+                                    <Input type='email' id='email' placeholder='Input your email'{...field}/>
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                    )}/>
+                    <FormField 
+                        control={form.control}
+                        name="password"
+                        render={({field}) => (
+                            <FormItem className='flex flex-col space-y-1.5 mb-3'>
+                                <label htmlFor="password" className='text-base'>Password <span className='text-destructive'>*</span></label>
+                                <section className='flexx space-x-3'>
+                                    <FormControl>
+                                        <Input type={showPassword ? "text" : "password"} id='password' placeholder='Input your password' {...field}/>
+                                    </FormControl>
+                                    <div className='rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors md:text-sm h-9 flex-center cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
+                                        {!showPassword ? <FiLock className='text-base'/> : <FiUnlock className='text-base'/>}
+                                    </div>
+                                </section>
+                                <FormMessage/>
+                            </FormItem>
+                    )}/>
+                    
+                    <div className="flex items-center space-x-2 mb-3">
+                        <Checkbox id="terms" />
+                        <label htmlFor="terms" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Remember Me
+                        </label>
                     </div>
-                    {errors.password && (
-                        <small className='text-destructive text-sm !mt-2'>{errors.password.message}</small>
-                    )}
-                </section>
-                <div className="flex items-center space-x-2 mb-3">
-                    <Checkbox id="terms" />
-                    <label htmlFor="terms" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Remember Me
-                    </label>
-                </div>
-                <Button type='submit' disabled={isLoading ? true: false}>
-                    {isLoading && <LuLoader2 className="animate-spin" />}
-                    {isLoading ? 'Waiting' : 'Submit'}
-                </Button>
-                <div className='mt-3'>
-                    <p className='text-sm'>
-                        Don't have an account? <Link href='/signup' className='text-sm underline'>Signup</Link>
-                    </p>
-                </div>
-                <section className='mt-5 '>
-                    <Button type='button' className='w-full' variant='outline' onClick={loginGoogle}>
-                        <RiGoogleFill/> Login with Google
+                    <Button type='submit' disabled={isLoading ? true: false}>
+                        {isLoading && <LuLoader2 className="animate-spin" />}
+                        {isLoading ? 'Waiting' : 'Submit'}
                     </Button>
-                </section>
-            </form>
+                    <div className='mt-3'>
+                        <p className='text-sm'>
+                            Don't have an account? <Link href='/signup' className='text-sm underline'>Signup</Link>
+                        </p>
+                    </div>
+                    <section className='mt-5 '>
+                        <Button type='button' className='w-full' variant='outline' onClick={loginGoogle}>
+                            <RiGoogleFill/> Login with Google
+                        </Button>
+                    </section>
+                </form>
+            </Form>
         </section>
     )
 }

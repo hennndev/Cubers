@@ -1,6 +1,7 @@
 import "./globals.css"
 import type { Metadata } from "next"
 import { Poppins } from "next/font/google"
+import { Toaster } from "@/app/components/ui/sonner"
 import NextAuthProvider from "@/app/components/wrapper/NextAuthProvider"
 
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${poppins.className} antialiased`}>
         <NextAuthProvider>
           {children}
+          <Toaster/>
         </NextAuthProvider>
       </body>
     </html>
