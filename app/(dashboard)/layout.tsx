@@ -9,7 +9,7 @@ type PropsTypes = {
 const DashboardLayout = ({children}: PropsTypes) => {
     return (
         <SidebarProvider>
-            <main className='flex w-full min-h-screen'>
+            <main className='flex w-full'>
                 <Sidebar/>
                 {children}
             </main>

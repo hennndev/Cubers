@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import { v4 as uuid} from "uuid"
 import { prisma } from "@/lib/config/prisma"
 import { SignupSchema } from "@/schemas/auth"
+import { receiveEmailVerification } from "../emails/emailAction"
 
 export const signup = async (values: zod.infer<typeof SignupSchema>) => {
     try {
@@ -32,8 +33,9 @@ export const signup = async (values: zod.infer<typeof SignupSchema>) => {
                 password: hashPassword,
             }
         })
+        await receiveEmailVerification(fields.email)
         return {
-            message: "Success create new user account"
+            message: "User has create. Please verified your email first before explore our services."
         }
     } catch (error: any) {
         return {

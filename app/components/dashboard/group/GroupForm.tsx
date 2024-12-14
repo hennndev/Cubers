@@ -22,17 +22,21 @@ type FormTypes = {
 
 const GroupForm = () => {
 
-    const { register, formState: {errors} } = useForm<FormTypes>({
+    const { register, formState: {errors}, handleSubmit } = useForm<FormTypes>({
         defaultValues: {
             name: "",
             description: "",
             level: "common"
         }
     })
+
+    const onSubmit = () => {
+
+    }
     
     return (
-        <section className=''>
-            <form>
+        <section className='px-10'>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <section className='flex flex-col space-y-1.5 mb-5'>
                     <label htmlFor="name" className='text-base'>Name <span className='text-red-500'>*</span></label>
                     <Input 

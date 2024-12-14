@@ -14,13 +14,14 @@ import {
     SidebarFooter
 } from "@/app/components/ui/sidebar"
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu'
 import { LuChevronsUpDown, LuChevronUp, LuUser2, LuCodesandbox } from 'react-icons/lu'
 
 
 
 const SidebarComponent = () => {
-
+    const router = useRouter()
     return (
         <Sidebar>
             <SidebarHeader className='mb-3'>
@@ -76,7 +77,7 @@ const SidebarComponent = () => {
                         side="top"
                         className="w-[--radix-popper-anchor-width]"
                         >
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push("/profile")} className='cursor-pointer'>
                             <span>Profile</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem>

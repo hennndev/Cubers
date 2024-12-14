@@ -7,9 +7,9 @@ export const dataSidebar = [
         url: '/dashboard'
     },
     {
-        name: 'Group',
+        name: 'Groups',
         Icon: LuUsers,
-        url: '/group'
+        url: '/groups'
     },
     {
         name: 'Projects',
