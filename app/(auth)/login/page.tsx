@@ -1,4 +1,4 @@
-import LoginForm from '@/app/components/LoginForm'
+import LoginForm from '@/app/components/auth/LoginForm'
 import React from 'react'
 
 export const metadata = {

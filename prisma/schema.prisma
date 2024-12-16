@@ -43,19 +43,20 @@ model Session {
 
 
 model User {
-  id              String        @id
+  id              String          @id
   name            String
-  username        String        @unique
-  email           String        @unique
+  username        String          @unique
+  email           String          @unique
   password        String?
-  emailVerified   Boolean       @default(false)
-  userDetailId    Int?           @unique
-  detail          UserDetail?    @relation(fields: [userDetailId], references: [id])
+  profileImage    String?         
+  emailVerified   Boolean         @default(false)
+  userDetailId    Int?            @unique
+  detail          UserDetail?     @relation(fields: [userDetailId], references: [id])
   memberGroup     MemberGroup[]
   groupOwner      Group[]
   accounts        Account[]
   sessions        Session[]
-  createdAt       DateTime      @default(now())
+  createdAt       DateTime        @default(now())
 
   @@index([userDetailId])
 }

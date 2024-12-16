@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 import * as zod from "zod"
 import { toast } from 'sonner'
 import Link from 'next/link'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
@@ -43,12 +43,8 @@ const SignupForm = () => {
                 throw res.error
             }
             setIsSuccess(true)
-            toast("User has created", {
-                description: "You can login now",
-                action: {
-                  label: "Login",
-                  onClick: () => router.push("/login"),
-                },
+            toast("New user has created", {
+                description: "Please verified your email now",
             })
         } catch (error: any) {
             setIsError(error as string)
@@ -59,7 +55,7 @@ const SignupForm = () => {
 
     const loginGoogle = async () => {
         await signIn("google", {
-            callbackUrl: "/group"
+            callbackUrl: "/dashboard"
         })
     }
 
@@ -73,7 +69,7 @@ const SignupForm = () => {
             </section>}
             {isSuccess && <section className='flexx relative mt-4 -mb-2 text-white font-normal bg-primary rounded-lg p-3'>
                 <LuCheck className='text-lg mr-2'/>
-                Success create new account
+                Success create new account. Check your email and verified your email now.
                 <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsError(null)}/>
             </section>}
             <Form {...form}>

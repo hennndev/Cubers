@@ -22,7 +22,7 @@ const EmailWrapper = ({title, children}: PropsTypes) => {
                     },
                 }}
             >
-                <Body className='bg-white p-[25px]'>
+                <Body className='bg-white p-[10px]'>
                     <Container className='mx-auto p-[20px]'>
                         {children}
                     </Container>

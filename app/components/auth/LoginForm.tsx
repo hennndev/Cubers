@@ -14,6 +14,7 @@ import { Button } from '@/app/components/ui/button'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LuAlertTriangle, LuX } from "react-icons/lu"
 import { Checkbox } from '@/app/components/ui/checkbox'
+import { createToken } from '../../utilities/createToken'
 import {
     Form,
     FormControl,
@@ -44,10 +45,14 @@ const LoginForm = () => {
                 password: values.password,
                 redirect: false
             })
+            console.log(res)
             if(res && !res.ok) {
                 throw res.error
             } else {
-                router.push("/group")
+                // if(res?.error) {
+                //     router.push(`/verified-your-email?token=${res.error}`)
+                // }
+                // router.push("/dashboard")
             }
         } catch (error: any) {
             setIsError(error as string)

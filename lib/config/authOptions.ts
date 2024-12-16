@@ -1,10 +1,13 @@
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
+import { v4 as uuid } from 'uuid'
 import { NextAuthOptions } from 'next-auth'
 import { LoginSchema } from '@/schemas/auth'
 import GoogleProvider from 'next-auth/providers/google'
 import Credentials from "next-auth/providers/credentials"
 import { receiveEmailWelcome } from '../actions/emails/emailAction'
+import supabase from './supabase'
+import { createToken } from '../utils'
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -28,7 +31,8 @@ export const authOptions: NextAuthOptions = {
                         name: true,
                         username: true,
                         password: true,
-                        emailVerified: true
+                        emailVerified: true,
+                        profileImage: true
                     }
                 })
                 if(!user) {
@@ -43,35 +47,78 @@ export const authOptions: NextAuthOptions = {
                         throw new Error("Password incorrect")
                     }
                     const { password, ...userData } = user
+
+                    if(!userData.emailVerified) {
+                        throw new Error("Email not verified")
+                    }
                     return userData
                 }
+                return true
             } 
         })
     ],
-    events: {
-        async linkAccount({user, account}) {
-            if(account.provider === "google") {
-                await prisma.user.update({
-                    where: {
-                        id: user.id
-                    },
-                    data: {
-                        emailVerified: true
-                    }
-                })
-                receiveEmailWelcome(user.email as string)
-            }
-        }
-    },
     callbacks: {
         async signIn({account, profile, user}) {
+            if(account?.provider === "google") {
+                const checkExistEmail = await prisma.user.findUnique({
+                    where: {
+                        email: profile?.email
+                    }
+                })
+                if(!checkExistEmail) {
+                    await prisma.user.create({
+                        data: {
+                            id: uuid(),
+                            name: profile?.name as string,
+                            username: profile?.name?.slice(0, 10) as string,
+                            email: profile?.email as string,
+                            emailVerified: true,
+                            profileImage: profile?.image as string
+                        }
+                    })
+                    receiveEmailWelcome(user.email as string)
+                }
+            }
             return true
         },
         //@ts-ignore
-        async jwt({token}) {
-            return token
+        async jwt({token, account, profile, trigger, session, user}) {
+            if(account?.provider === "google") {
+                const existUser = await prisma.user.findUnique({
+                    where: {
+                        email: profile?.email
+                    },
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        username: true,
+                        password: true,
+                        emailVerified: true,
+                        profileImage: true
+                    }
+                })
+                if(existUser) {
+                    token.id = existUser.id
+                    token.name = existUser.name
+                    token.username = existUser.username
+                    token.picture = existUser.profileImage
+                    token.email = existUser.email
+                }
+                if(trigger === "update" && (session.image === null || session.image)) {
+                    token.picture = session?.image
+                }
+            }
+            return {...user, ...token}
         },
-        async session({session}) {
+        async session({session, token, newSession, trigger}: {session: any, token: any, newSession: any, trigger: any}) {
+            session.user.id = token.id
+            session.user.name = token.name
+            session.user.username = token.username
+            session.user.image = token.picture
+            if(trigger === "update" && newSession.image) {
+                session.user.image = newSession.image
+            }
             return session
         },
     },
