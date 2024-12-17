@@ -5,7 +5,7 @@ import { NextAuthOptions } from 'next-auth'
 import { LoginSchema } from '@/schemas/auth'
 import GoogleProvider from 'next-auth/providers/google'
 import Credentials from "next-auth/providers/credentials"
-import { receiveEmailWelcome } from '../actions/emails/emailAction'
+import { receiveEmailVerification, receiveEmailWelcome } from '../actions/emails/emailAction'
 import supabase from './supabase'
 import { createToken } from '../utils'
 
@@ -49,7 +49,14 @@ export const authOptions: NextAuthOptions = {
                     const { password, ...userData } = user
 
                     if(!userData.emailVerified) {
-                        throw new Error("Email not verified")
+                        // token untuk akses halaman verified your email
+                        const token = createToken(user.email, process.env.LOGIN_REDIRECT_EMAIL_VERIFICATION_SECRET as string, 60 * 5)
+                        // kemudian mengirimkan verifikasi email ke email tujuan
+                        await receiveEmailVerification(user.email, user.username)
+                        throw new Error(JSON.stringify({
+                            error: "Email not verified",
+                            token
+                        }))
                     }
                     return userData
                 }

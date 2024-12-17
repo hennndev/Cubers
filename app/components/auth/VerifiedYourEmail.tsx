@@ -1,17 +1,20 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { IoMdMail } from "react-icons/io"
 import { LuLoader2 } from 'react-icons/lu'
 import { Button } from '@/app/components/ui/button'
 import useDecodedToken from '../../hooks/useDecodedToken'
 import { receiveEmailVerification } from '@/lib/actions/emails/emailAction'
+import { checkEmailIsVerified } from '@/lib/actions/auth/checkEmailIsVerified'
+import { useRouter } from 'next/navigation'
 
 type PropsTypes = {
     token: string
 }
 
 const VerifiedYourEmail = ({token}: PropsTypes) => {
+    const router = useRouter()
     const { dataDecoded } = useDecodedToken(token)
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -28,8 +31,19 @@ const VerifiedYourEmail = ({token}: PropsTypes) => {
             setIsLoading(false)
         }
     }
-    
 
+    const checkEmail = async () => {
+        const res = await checkEmailIsVerified(dataDecoded?.email as string)
+        if(res) {
+            router.push("/login")
+        } 
+    }
+
+    useEffect(() => {
+        checkEmail()
+    }, [token])
+
+    
     return (
         <section className='flex-center flex-col space-y-5'>
             <section className='w-14 h-14 rounded-full flex-center text-center bg-green-100'>
@@ -44,7 +58,7 @@ const VerifiedYourEmail = ({token}: PropsTypes) => {
                 </section>
                 <p>Just click on the link in that email to complete your account. If you don't see it, you may need to <span className='font-bold text-gray-700'>check your spam</span> folder</p>
                 <p>Still can't find that link in the email? No problem.</p>
-                <Button onClick={handleResend}>
+                <Button disabled={isLoading} onClick={handleResend}>
                     {isLoading && <LuLoader2 className="animate-spin" />}
                     {isLoading ? 'Waiting' : 'Resend verification email'}
                 </Button>

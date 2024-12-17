@@ -45,17 +45,18 @@ const LoginForm = () => {
                 password: values.password,
                 redirect: false
             })
-            console.log(res)
             if(res && !res.ok) {
                 throw res.error
             } else {
-                // if(res?.error) {
-                //     router.push(`/verified-your-email?token=${res.error}`)
-                // }
-                // router.push("/dashboard")
+                router.push("/dashboard")
             }
         } catch (error: any) {
-            setIsError(error as string)
+            if(error.includes("Email not verified")) {
+                const parsingError = JSON.parse(error)
+                router.push(`/verified-your-email?token=${parsingError.token}`)
+            } else {
+                setIsError(error as string)
+            }
         } finally {
             setIsLoading(false)
         }
