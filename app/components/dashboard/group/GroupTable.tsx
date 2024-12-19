@@ -11,6 +11,7 @@ import {
     TableRow,
   } from "@/app/components/ui/table"
 import { Button } from '@/app/components/ui/button'
+import { useSession } from 'next-auth/react'
    
   const groups = [
     {
@@ -28,6 +29,9 @@ import { Button } from '@/app/components/ui/button'
   ]
 
 const GroupTable = () => {
+  const session = useSession()
+  console.log(session.status)
+
     return (
         <Table>
             <TableCaption>A list of group projects.</TableCaption>

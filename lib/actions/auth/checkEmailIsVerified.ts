@@ -1,17 +1,15 @@
 "use server"
 import { prisma } from "@/lib/config/prisma"
 
-export const checkEmailIsVerified = async (email: string): Promise<boolean> => {
+export const checkEmailIsVerified = async (email: string) => {
     // mengidentifikasi apakah email tersebut sudah verified atau belum
-    const userVerified = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
         where: {
-            email,
-            emailVerified: true
+            email: email
         },
     })
-    if(userVerified) {
-        return true
-    } else {
-        return false
+    if(!user?.emailVerified) {
+        throw new Error("Email not verified")
     }
+    return true
 }

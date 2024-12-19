@@ -10,7 +10,7 @@ const EmailVerification = async ({searchParams}: {searchParams: Promise<{[key: s
     const token = (await searchParams).token
 
     if(!token) {
-        redirect("/login")
+        redirect("/page-not-found")
     }
 
     return (

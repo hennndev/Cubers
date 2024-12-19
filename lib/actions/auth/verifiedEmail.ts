@@ -23,6 +23,9 @@ export const verifiedEmail = async (token: string) => {
         }
     } catch (error: any) {
         // Jika invalid atau expired atau error, throw error message
+        if(error.message === "Email already verified") {
+            throw new Error("Email already verified")
+        }
         if(error.name === "TokenExpiredError") {
             throw new Error("Token has expired")
         } else {

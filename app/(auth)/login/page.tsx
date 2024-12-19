@@ -1,6 +1,7 @@
 import LoginForm from '@/app/components/auth/LoginForm'
 import React from 'react'
 
+
 export const metadata = {
     title: "Login"
 }

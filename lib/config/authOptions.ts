@@ -49,6 +49,7 @@ export const authOptions: NextAuthOptions = {
                     const { password, ...userData } = user
 
                     if(!userData.emailVerified) {
+                        console.log(user)
                         // token untuk akses halaman verified your email
                         const token = createToken(user.email, process.env.LOGIN_REDIRECT_EMAIL_VERIFICATION_SECRET as string, 60 * 5)
                         // kemudian mengirimkan verifikasi email ke email tujuan

@@ -1,12 +1,22 @@
 import React from 'react'
-import { Section, Heading } from "@react-email/components"
+import { Section, Heading, Text, Hr } from "@react-email/components"
 import EmailWrapper from './emailWrapper'
 
 const EmailWelcome = () => {
     return (
-        <EmailWrapper title='Thakyou for register to Cubers. Feel free to explore and ask out team to get support.'>
-           <Section className='bg-white p-[30px] rounded-md'>
-                <Heading className='text-xl text-center font-bold'>Welcome to Cubers</Heading>
+        <EmailWrapper title='Hi, welcome to Cubers!'>
+           <Section className='bg-gray-100 p-[15px] rounded-md'>
+                <Heading className='text-2xl text-center font-black text-[#222]'>Welcome to Cubers</Heading>
+                <Text className='text-[16px] leading-[25px] text-[#222]'>
+                    Wowewee! Thankyou for register an account to Cubers. You're the coolest person in the world. Please, feel free to explore our features and ask our team to get support if you want. ❤️
+                </Text>
+                <Text className='text-[16px] leading-[25px]'>
+                    Best,
+                    <br />
+                    Hendra Kece Badai
+                </Text>
+                <Hr className='border-[#222] my-[20px]'/>
+                <Text>Purbalingga, Jawa Tengah, Indonesia</Text>
            </Section>
         </EmailWrapper>
     )

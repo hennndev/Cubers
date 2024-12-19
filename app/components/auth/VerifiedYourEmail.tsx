@@ -1,13 +1,16 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import Countdown from "react-countdown"
 import { IoMdMail } from "react-icons/io"
 import { LuLoader2 } from 'react-icons/lu'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/app/components/ui/button'
 import useDecodedToken from '../../hooks/useDecodedToken'
 import { receiveEmailVerification } from '@/lib/actions/emails/emailAction'
 import { checkEmailIsVerified } from '@/lib/actions/auth/checkEmailIsVerified'
-import { useRouter } from 'next/navigation'
+import { count } from 'node:console'
+import ResendTimer from './ResendTimer'
 
 type PropsTypes = {
     token: string
@@ -16,34 +19,51 @@ type PropsTypes = {
 const VerifiedYourEmail = ({token}: PropsTypes) => {
     const router = useRouter()
     const { dataDecoded } = useDecodedToken(token)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isClickResend, setIsClickResend] = useState<boolean>(JSON.parse(localStorage.getItem("isClickResend") as string) || false)
+    const [countdownReclickResend, setCountdownReclickResend] = useState<number>(+JSON.parse(localStorage.getItem("countdown") as string) || 0)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [resendLoading, setResendLoading] = useState<boolean>(false)
 
     const handleResend = async () => {
-        setIsLoading(true)
+        setResendLoading(true)
+        await receiveEmailVerification(dataDecoded?.email as string)
+        toast("New email verification has sended. Please check your email", {
+            description: "Please check your email",
+            duration: 10000
+        })
+        setResendLoading(false)
+        setIsClickResend(true)
+        localStorage.setItem("isClickResend", JSON.stringify(true))
+        setCountdownReclickResend(Date.now() + 60000)
+        localStorage.setItem("countdown", JSON.stringify(Date.now() + 60000))
+    }
+
+    const checkEmail = async () => {
         try {
-            await receiveEmailVerification(dataDecoded?.email as string)
-            toast("New email verification has sended. Please check your email", {
-                description: "Please check your email",
-                duration: 10000
-            })
+            const res = await checkEmailIsVerified(dataDecoded?.email as string)
+            if(res) {
+                router.push("/page-not-found")
+            }
         } catch (error) {
+            console.log(error)
         } finally {
             setIsLoading(false)
         }
     }
 
-    const checkEmail = async () => {
-        const res = await checkEmailIsVerified(dataDecoded?.email as string)
-        if(res) {
-            router.push("/login")
-        } 
-    }
-
     useEffect(() => {
-        checkEmail()
-    }, [token])
+        if(dataDecoded) {
+            checkEmail()
+        }
+    }, [token, dataDecoded])
 
-    
+    if(isLoading) {
+        return (
+            <section className='flex-center flex-col space-y-5'>
+                <p className='animate-pulse'>Loading...</p>
+            </section>
+        )
+    }      
     return (
         <section className='flex-center flex-col space-y-5'>
             <section className='w-14 h-14 rounded-full flex-center text-center bg-green-100'>
@@ -58,9 +78,10 @@ const VerifiedYourEmail = ({token}: PropsTypes) => {
                 </section>
                 <p>Just click on the link in that email to complete your account. If you don't see it, you may need to <span className='font-bold text-gray-700'>check your spam</span> folder</p>
                 <p>Still can't find that link in the email? No problem.</p>
-                <Button disabled={isLoading} onClick={handleResend}>
-                    {isLoading && <LuLoader2 className="animate-spin" />}
-                    {isLoading ? 'Waiting' : 'Resend verification email'}
+                {isClickResend && <ResendTimer countdownReclickResend={countdownReclickResend} setIsClickResend={setIsClickResend}/>}
+                <Button disabled={resendLoading || isClickResend} onClick={handleResend}>
+                    {resendLoading && <LuLoader2 className="animate-spin" />}
+                    {resendLoading ? 'Waiting' : isClickResend ? 'Wait the countdown' : 'Resend verification email'}
                 </Button>
             </section>
         </section>

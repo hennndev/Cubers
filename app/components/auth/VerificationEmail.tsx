@@ -6,6 +6,7 @@ import { FaXmark } from "react-icons/fa6"
 import { useRouter } from 'next/navigation'
 import { Button } from '@/app/components/ui/button'
 import { verifiedEmail } from '@/lib/actions/auth/verifiedEmail'
+import useDecodedToken from '@/app/hooks/useDecodedToken'
 
 type PropsTypes = {
     token: string
@@ -13,13 +14,13 @@ type PropsTypes = {
 
 const VerificationEmail = ({token}: PropsTypes) => {
     const router = useRouter()
+    const { dataDecoded } = useDecodedToken(token)
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [isVerified, setIsVerified] = useState<boolean | null>(false)
     const [verificationMessage, setVerificationMessage] = useState<null | string>(null)
     
     const verifyEmail = async () => {
         try {
-            // verify email
             await verifiedEmail(token)
             // set state bahwa email sudah terverifikasi
             setIsVerified(true)
@@ -27,6 +28,9 @@ const VerificationEmail = ({token}: PropsTypes) => {
             setVerificationMessage("Your email has verified")
         } catch (error: any) {
             // tampilkan error message
+            if(error.message === "Email already verified") {
+                router.push("page-not-found")
+            }
             setVerificationMessage(error.message || "Something went wrong")
             // tampilkan failed message verified
             setIsVerified(false)
@@ -37,8 +41,10 @@ const VerificationEmail = ({token}: PropsTypes) => {
 
     useEffect(() => {
         // otomatis terpanggil ketika redirect ke halaman ini
-        verifyEmail()
-    }, [])
+        if(!isVerified) {
+            verifyEmail()
+        }
+    }, [dataDecoded, token, isVerified])
     
     if(isLoading) {
         return (
@@ -67,8 +73,8 @@ const VerificationEmail = ({token}: PropsTypes) => {
                     {verificationMessage === "Token invalid" ? "Token has invalid" : ""}
                     {verificationMessage === "Token has expired" ? "Token has expired. Please click below button for verified your email again." : ""}
                 </p>
-                <Button onClick={() => router.push(isVerified ? "/dashboard" : `/verified-your-email?token=${token}`)}>
-                    {verificationMessage === "Token has expired" ? "Verified your email" : "Dashboard"}
+                <Button onClick={() => router.push(isVerified ? "/login" : `/verified-your-email?token=${token}`)}>
+                    {verificationMessage === "Token has expired" ? "Verified your email" : "Login"}
                 </Button>
             </section>
         </section>

@@ -47,7 +47,8 @@ const LoginForm = () => {
             })
             if(res && !res.ok) {
                 throw res.error
-            } else {
+            } 
+            else {
                 router.push("/dashboard")
             }
         } catch (error: any) {

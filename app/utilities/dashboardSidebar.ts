@@ -9,27 +9,27 @@ export const dataSidebar = [
     {
         name: 'Groups',
         Icon: LuUsers,
-        url: '/groups'
+        url: '/dashboard/groups'
     },
     {
         name: 'Projects',
         Icon: LuBriefcase,
-        url: '/projects'
+        url: '/dashboard/projects'
     },
     {
         name: 'Friends',
         Icon: LuContact2,
-        url: '/friends'
+        url: '/dashboard/friends'
     },
     {
         name: 'Schedule',
         Icon: LuCalendarDays,
-        url: '/schedule'
+        url: '/dashboard/schedule'
     },
     {
         name: 'Storage',
         Icon: LuFolders,
-        url: '/storage'
+        url: '/dashboard/storage'
     },
 ]
 

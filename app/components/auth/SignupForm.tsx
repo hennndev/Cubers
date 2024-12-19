@@ -3,21 +3,20 @@ import React, { useState } from 'react'
 import * as zod from "zod"
 import { toast } from 'sonner'
 import Link from 'next/link'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { RiGoogleFill } from 'react-icons/ri'
 import { SignupSchema } from '@/schemas/auth'
 import { FiLock, FiUnlock } from "react-icons/fi"
+import { Input } from '@/app/components/ui/input'
+import { Button } from '@/app/components/ui/button'
 import { signup } from '@/lib/actions/auth/signup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LuAlertTriangle, LuX, LuLoader2, LuCheck } from 'react-icons/lu'
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/app/components/ui/form"
 
 const SignupForm = () => {
-    const router = useRouter()
     const [isError, setIsError] = useState<null | string>(null)
     const [isSuccess, setIsSuccess] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -39,9 +38,11 @@ const SignupForm = () => {
         setIsError(null)
         try {
             const res = await signup(values)
+            // Jika error, maka throw atau tampilkan errornya
             if(res && res.error) {
                 throw res.error
             }
+            // Jika success, set value jadi true, dan akan menampilkan alert success message
             setIsSuccess(true)
             toast("New user has created", {
                 description: "Please verified your email now",
@@ -63,14 +64,14 @@ const SignupForm = () => {
         <section className='w-[550px] pt-10 pb-10'>
             <h1 className='text-3xl font-bold tracking-tight text-back'>Signup</h1>
             {isError && <section className='flexx relative mt-4 -mb-2 text-white font-normal bg-destructive rounded-lg p-3'>
-                <LuAlertTriangle className='text-lg mr-2'/>
+                <LuAlertTriangle className='text-xl mr-2'/>
                 {isError}
                 <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsError(null)}/>
             </section>}
-            {isSuccess && <section className='flexx relative mt-4 -mb-2 text-white font-normal bg-primary rounded-lg p-3'>
-                <LuCheck className='text-lg mr-2'/>
-                Success create new account. Check your email and verified your email now.
-                <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsError(null)}/>
+            {isSuccess && <section className='flex relative mt-4 -mb-2 text-white font-normal bg-green-600 rounded-lg p-3'>
+                <LuCheck className='text-2xl mr-2'/>
+                <p className='mr-5'>Success create new account. Check your email and verified your email now.</p>
+                <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsSuccess(false)}/>
             </section>}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className='mt-5 flex flex-col'>
