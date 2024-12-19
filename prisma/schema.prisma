@@ -50,6 +50,7 @@ model User {
   password        String?
   profileImage    String?         
   emailVerified   Boolean         @default(false)
+  loginMethod     LoginMethod     @default(CREDENTIALS)
   userDetailId    Int?            @unique
   detail          UserDetail?     @relation(fields: [userDetailId], references: [id])
   memberGroup     MemberGroup[]
@@ -59,6 +60,11 @@ model User {
   createdAt       DateTime        @default(now())
 
   @@index([userDetailId])
+}
+
+enum LoginMethod {
+  CREDENTIALS
+  GOOGLE
 }
 
 model UserDetail {

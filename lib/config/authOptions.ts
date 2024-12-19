@@ -1,13 +1,12 @@
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 import { v4 as uuid } from 'uuid'
+import { createToken } from '../utils'
 import { NextAuthOptions } from 'next-auth'
 import { LoginSchema } from '@/schemas/auth'
 import GoogleProvider from 'next-auth/providers/google'
 import Credentials from "next-auth/providers/credentials"
 import { receiveEmailVerification, receiveEmailWelcome } from '../actions/emails/emailAction'
-import supabase from './supabase'
-import { createToken } from '../utils'
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -32,13 +31,15 @@ export const authOptions: NextAuthOptions = {
                         username: true,
                         password: true,
                         emailVerified: true,
-                        profileImage: true
+                        profileImage: true,
+                        loginMethod: true
                     }
                 })
                 if(!user) {
                     throw new Error("Email not found")
                 }
-                if(user && !user.password) {
+                if(user)
+                if(user && user.loginMethod === "GOOGLE") {
                     throw new Error("This account already registered using google")
                 }
                 if(user && user.password) {
@@ -81,7 +82,8 @@ export const authOptions: NextAuthOptions = {
                             username: profile?.name?.slice(0, 10) as string,
                             email: profile?.email as string,
                             emailVerified: true,
-                            profileImage: profile?.image as string
+                            profileImage: profile?.image as string,
+                            loginMethod: "GOOGLE"
                         }
                     })
                     receiveEmailWelcome(user.email as string)
@@ -110,7 +112,7 @@ export const authOptions: NextAuthOptions = {
                     token.id = existUser.id
                     token.name = existUser.name
                     token.username = existUser.username
-                    token.picture = existUser.profileImage
+                    token.image = existUser.profileImage
                     token.email = existUser.email
                 }
                 if(trigger === "update" && (session.image === null || session.image)) {

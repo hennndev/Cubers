@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { dataSidebar } from '@/app/utilities/dashboardSidebar'
+import Link from 'next/link'
 import {
     Sidebar,
     SidebarHeader,
@@ -13,17 +13,17 @@ import {
     SidebarMenuItem,
     SidebarFooter
 } from "@/app/components/ui/sidebar"
-import Link from 'next/link'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu'
+import { dataSidebar } from '@/app/utilities/dashboardSidebar'
 import { LuChevronsUpDown, LuChevronUp, LuUser2, LuCodesandbox } from 'react-icons/lu'
-
-
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/app/components/ui/dropdown-menu'
 
 const SidebarComponent = () => {
     const router = useRouter()
     return (
         <Sidebar>
+            {/* sidebar header */}
             <SidebarHeader className='mb-3'>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -42,6 +42,8 @@ const SidebarComponent = () => {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
+
+            {/* sidebar content */}
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -62,7 +64,7 @@ const SidebarComponent = () => {
                 </SidebarGroup>
             </SidebarContent>
 
-
+            {/* sidebar footer */}
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -77,13 +79,13 @@ const SidebarComponent = () => {
                         side="top"
                         className="w-[--radix-popper-anchor-width]"
                         >
-                        <DropdownMenuItem onClick={() => router.push("/profile")} className='cursor-pointer'>
+                        <DropdownMenuItem onClick={() => router.push("/dashboard/profile")} className='cursor-pointer'>
                             <span>Profile</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <span>Mail</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => signOut()}>
                             <span>Sign out</span>
                         </DropdownMenuItem>
                         </DropdownMenuContent>
