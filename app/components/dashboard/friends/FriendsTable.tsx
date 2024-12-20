@@ -1,33 +1,22 @@
 "use client"
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     Table,
     TableBody,
     TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
   } from "@/app/components/ui/table"
 import { Button } from '@/app/components/ui/button'
-   
-const friends = [
-    {
-        id: 1,
-        name: "Zulfa Aulia Hanafi",
-        email: "zulfa@zulfa.com",
-        status: "Student",
-    },
-    {
-        id: 2,
-        name: "Tugas Machine learning",
-        email: "zulfa@zulfa.com",
-        status: "Student",
-    },
-]
 
-const FriendsTable = () => {
+type PropsTypes = {
+    data: FriendDataTypes[]
+}
+
+const FriendsTable = ({data}: PropsTypes) => {    
+    console.log(data)
     return (
         <Table>
             <TableCaption>A list of friends.</TableCaption>
@@ -43,25 +32,25 @@ const FriendsTable = () => {
             </TableHeader>
 
             <TableBody>
-            {friends.map((obj) => (
-                <TableRow key={obj.id}>
-                    <TableCell className="font-medium">{obj.id}</TableCell>
-                    <TableCell>{obj.name}</TableCell>
-                    <TableCell>
-                        {obj.email}
-                    </TableCell>
-                    <TableCell>
-                        {obj.status}
-                    </TableCell>
-                    <TableCell>
-                        <Button variant="secondary" size="sm">User Detail</Button>
-                    </TableCell>
-                    <TableCell className='text-right space-x-3'>
-                        <Button variant="secondary" size="sm">Edit</Button>
-                        <Button variant="destructive" size="sm">Remove</Button>
-                    </TableCell>
-                </TableRow>
-            ))}
+                {data.map((obj: FriendDataTypes, index: number) => (
+                    <TableRow key={obj.id}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        <TableCell>{obj.name}</TableCell>
+                        <TableCell>
+                            {obj.email}
+                        </TableCell>
+                        <TableCell>
+                            Student
+                        </TableCell>
+                        <TableCell>
+                            <Button variant="secondary" size="sm">User Detail</Button>
+                        </TableCell>
+                        <TableCell className='text-right space-x-3'>
+                            <Button variant="secondary" size="sm">Edit</Button>
+                            <Button variant="destructive" size="sm">Remove</Button>
+                        </TableCell>
+                    </TableRow>
+                ))}
             </TableBody>
       </Table>
     )

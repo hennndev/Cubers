@@ -115,9 +115,9 @@ export const authOptions: NextAuthOptions = {
                     token.image = existUser.profileImage
                     token.email = existUser.email
                 }
-                if(trigger === "update" && (session.image === null || session.image)) {
-                    token.picture = session?.image
-                }
+            }
+            if(trigger === "update" && (session.image === null || session.image)) {
+                token.picture = session?.image
             }
             return {...user, ...token}
         },
@@ -129,6 +129,7 @@ export const authOptions: NextAuthOptions = {
             if(trigger === "update" && newSession.image) {
                 session.user.image = newSession.image
             }
+            console.log(session)
             return session
         },
     },

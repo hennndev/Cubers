@@ -26,6 +26,7 @@ model Account {
   updatedAt          DateTime  @updatedAt
   user               User      @relation(fields: [userId], references: [id])
 
+  @@map("account")
   @@unique([providerId, providerAccountId])
 }
 
@@ -38,6 +39,8 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
+
+  @@map("session")
 }
 
 
@@ -53,12 +56,15 @@ model User {
   loginMethod     LoginMethod     @default(CREDENTIALS)
   userDetailId    Int?            @unique
   detail          UserDetail?     @relation(fields: [userDetailId], references: [id])
-  memberGroup     MemberGroup[]
-  groupOwner      Group[]
+  groupsMember    GroupMember[]
+  groupsOwner     Group[]
+  friends         User[]          @relation("Friends")
+  friendOf        User[]          @relation("Friends")
   accounts        Account[]
   sessions        Session[]
   createdAt       DateTime        @default(now())
 
+  @@map("users")
   @@index([userDetailId])
 }
 
@@ -83,6 +89,7 @@ model UserDetail {
   detailWorker      DetailWorker?     @relation(fields: [detailWorkerId], references: [id])
   createdAt         DateTime          @default(now())
 
+  @@map("user_detail")
   @@index([detailStudentId])
   @@index([detailWorkerId])
 }
@@ -98,6 +105,8 @@ model DetailStudent {
   prodi         String
   semester      Int
   userDetail    UserDetail?
+
+  @@map("detail_student")
 }
 
 model DetailWorker {
@@ -105,6 +114,8 @@ model DetailWorker {
   job         String
   company     String
   userDetail  UserDetail?
+
+  @@map("detail_worker")
 }
 
 
@@ -116,13 +127,14 @@ model Group {
   name          String
   description   String
   tags          String[]
-  members       MemberGroup[]
+  members       GroupMember[]
   createdAt     DateTime      @default(now())
 
+  @@map("groups")
   @@index([groupOwnerId])
 }
 
-model MemberGroup {
+model GroupMember {
   id            Int        @id @default(autoincrement())
   roleGroup     RoleGroup  @default(MEMBER)
   role          String
@@ -130,9 +142,10 @@ model MemberGroup {
   user          User       @relation(fields: [userId], references: [id])
   groupId       Int
   group         Group      @relation(fields: [groupId], references: [id])
-  task          Task[]
+  tasks         Task[]
   createdAt     DateTime   @default(now())
-
+  
+  @@map("group_member")
   @@index([userId])
   @@index([groupId])
 }
@@ -146,11 +159,13 @@ model Task {
   id          Int             @id @default(autoincrement())
   name        String
   description String
-  status      TaskStatus
+  status      TaskStatus      @default(ToDo)
   assigneeId  Int
-  assignee    MemberGroup     @relation(fields: [assigneeId], references: [id])
+  assignee    GroupMember     @relation(fields: [assigneeId], references: [id])
   review      String
   createdAt   DateTime        @default(now())
+
+  @@map("task")
 }
 
 enum TaskStatus {

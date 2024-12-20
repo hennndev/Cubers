@@ -6,12 +6,16 @@ import GroupTable from '@/app/components/dashboard/group/GroupTable'
 import GroupTableHeader from '@/app/components/dashboard/group/GroupTableHeader'
 import PageHeader from '@/app/components/dashboard/PageHeader'
 
+export const metadata = {
+    title: "Groups"
+}
+
 const Group = () => {
     return (
         <section className='flex-1 pb-10'>
             <PageHeader title='Groups' description='View and manage group'>
                 <Button asChild>
-                    <Link href="/groups/create-group">
+                    <Link href="/dashboard/groups/create-group">
                         <LuPlus/> Create group
                     </Link>
                 </Button>

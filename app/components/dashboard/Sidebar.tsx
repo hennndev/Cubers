@@ -13,7 +13,7 @@ import {
     SidebarMenuItem,
     SidebarFooter
 } from "@/app/components/ui/sidebar"
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { dataSidebar } from '@/app/utilities/dashboardSidebar'
 import { LuChevronsUpDown, LuChevronUp, LuUser2, LuCodesandbox } from 'react-icons/lu'
@@ -21,6 +21,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 
 const SidebarComponent = () => {
     const router = useRouter()
+    const session = useSession()
     return (
         <Sidebar>
             {/* sidebar header */}
@@ -71,7 +72,7 @@ const SidebarComponent = () => {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                         <SidebarMenuButton>
-                            <LuUser2 /> Zulfa
+                            <LuUser2 /> {session.data?.user?.name}
                             <LuChevronUp className="ml-auto" />
                         </SidebarMenuButton>
                         </DropdownMenuTrigger>

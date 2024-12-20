@@ -65,7 +65,7 @@ const LoginForm = () => {
 
     const loginGoogle = async () => {
         await signIn("google", {
-            callbackUrl: "/group"
+            callbackUrl: "/dashboard"
         })
     }
 
