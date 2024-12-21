@@ -39,6 +39,7 @@ const GroupTable = () => {
                 <TableRow>
                     <TableHead className="w-[100px]">No</TableHead>
                     <TableHead>Name</TableHead>
+                    <TableHead>Role Group</TableHead>
                     <TableHead>Members</TableHead>
                     <TableHead>Group Detail</TableHead>
                     <TableHead>Created At</TableHead>
@@ -51,6 +52,7 @@ const GroupTable = () => {
                 <TableRow key={group.id}>
                     <TableCell className="font-medium">{group.id}</TableCell>
                     <TableCell>{group.name}</TableCell>
+                    <TableCell>OWNER</TableCell>
                     <TableCell>
                         0 Member
                     </TableCell>

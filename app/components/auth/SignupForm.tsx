@@ -93,7 +93,12 @@ const SignupForm = () => {
                                 <FormItem className='flex flex-col space-y-1.5 mb-3 flex-1'>
                                     <label htmlFor="username" className='text-base'>Username <span className='text-destructive'>*</span></label>
                                     <FormControl>
-                                        <Input type='text' id='username' placeholder='Input your name' {...field}/>
+                                        <Input 
+                                            type='text' 
+                                            id='username' 
+                                            placeholder='Input your name' 
+                                            {...field}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value.trim())}/>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

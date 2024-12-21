@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
                         data: {
                             id: uuid(),
                             name: profile?.name as string,
-                            username: profile?.name?.slice(0, 10) as string,
+                            username: profile?.name?.slice(0, 10).trim().replaceAll(" ", "") as string,
                             email: profile?.email as string,
                             emailVerified: true,
                             profileImage: profile?.image as string,

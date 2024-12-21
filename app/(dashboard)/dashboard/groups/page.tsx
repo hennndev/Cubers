@@ -1,16 +1,25 @@
 import React from 'react'
 import Link from 'next/link'
 import { LuPlus } from 'react-icons/lu'
+import { getServerSession } from 'next-auth'
 import { Button } from '@/app/components/ui/button'
-import GroupTable from '@/app/components/dashboard/group/GroupTable'
-import GroupTableHeader from '@/app/components/dashboard/group/GroupTableHeader'
+import { authOptions } from '@/lib/config/authOptions'
+import GroupTable from '@/app/components/dashboard/groups/GroupTable'
+import GroupTableHeader from '@/app/components/dashboard/groups/GroupTableHeader'
 import PageHeader from '@/app/components/dashboard/PageHeader'
+import { getGroups } from '@/lib/actions/groups/getGroups'
 
 export const metadata = {
     title: "Groups"
 }
 
-const Group = () => {
+const Group = async () => {
+    const session = await getServerSession(authOptions)
+    const userId = session?.user.id
+    
+    const groups = await getGroups(userId as string)
+    console.log(groups)
+
     return (
         <section className='flex-1 pb-10'>
             <PageHeader title='Groups' description='View and manage group'>

@@ -1,4 +1,4 @@
-import GroupForm from '@/app/components/dashboard/group/GroupForm'
+import GroupForm from '@/app/components/dashboard/groups/GroupForm'
 import React from 'react'
 import { LuArrowLeft } from 'react-icons/lu'
 
