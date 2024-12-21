@@ -10,13 +10,27 @@ import {
     TableRow,
   } from "@/app/components/ui/table"
 import { Button } from '@/app/components/ui/button'
+import { useSession } from 'next-auth/react'
+import { removeFriend } from '@/lib/actions/users/removeFriend'
+import { toast } from 'sonner'
 
 type PropsTypes = {
     data: FriendDataTypes[]
 }
 
 const FriendsTable = ({data}: PropsTypes) => {    
-    console.log(data)
+    const session = useSession()
+    const userId = session.data?.user.id
+
+    const handleRemoveFriend = async (friendId: string) => {
+        try {
+            await removeFriend(userId as string, friendId)
+            toast.success("Friend has removed")
+        } catch (error) {
+            toast.error("Friend has failed to removed")
+        }
+    }
+
     return (
         <Table>
             <TableCaption>A list of friends.</TableCaption>
@@ -46,8 +60,7 @@ const FriendsTable = ({data}: PropsTypes) => {
                             <Button variant="secondary" size="sm">User Detail</Button>
                         </TableCell>
                         <TableCell className='text-right space-x-3'>
-                            <Button variant="secondary" size="sm">Edit</Button>
-                            <Button variant="destructive" size="sm">Remove</Button>
+                            <Button variant="destructive" size="sm" onClick={() => handleRemoveFriend(obj.id)}>Remove</Button>
                         </TableCell>
                     </TableRow>
                 ))}

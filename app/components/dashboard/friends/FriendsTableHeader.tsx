@@ -15,11 +15,15 @@ type FriendsResponseTypes = {
     email: string
 }
 
-const FriendsTableHeader = () => {
+type PropsTypes = {
+    data: FriendDataTypes[]
+}
+
+const FriendsTableHeader = ({data}: PropsTypes) => {
     const session = useSession()
     const userId = session.data?.user?.id as string
-    const [results, setResults] = useState<FriendsResponseTypes[]>([])
     const [searchTerm, setSearchTerm] = useState<string>("")
+    const [results, setResults] = useState<FriendsResponseTypes[]>([])
 
     const debouncedSearchUsers = debounce(async (keyword) => {
         const results = await findUsers(keyword)
@@ -40,8 +44,12 @@ const FriendsTableHeader = () => {
             toast.error("Failed add new friend")
         }
     }
+    
+    const isFriend = (userId: string) => {
+        return data.find(obj => obj.id === userId)
+    }
 
-    console.log(results)
+    console.log(!isFriend("a4e23e5d-c91d-4342-9850-9eaa92501c40"))
 
     return (
         <section className='relative w-full h-auto'>
@@ -60,7 +68,7 @@ const FriendsTableHeader = () => {
                         results.map((user: FriendsResponseTypes) => (
                             <section key={user.id} className='flex-between cursor-pointer hover:bg-gray-100 py-3 px-4'>
                                 <p>{user.username}</p>
-                                {userId !== user.id && (
+                                {!isFriend(user.id) && userId !== user.id && (
                                     <button onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleAddFriend(e, user.id)} className='outline-none border-none text-gray-700'>Tambahkan</button>
                                 )}
                             </section>

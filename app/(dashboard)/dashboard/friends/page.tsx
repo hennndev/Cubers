@@ -18,8 +18,8 @@ const Group = async () => {
         <section className='flex-1 pb-10'>
             <PageHeader title='Friends' description='View and manage friend list'/>
             <section className='flex flex-col space-y-6 px-10 h-screen'>
-                <FriendsTableHeader/>
-                <FriendsTable data={friends.data}/>
+                <FriendsTableHeader data={friends.data as FriendDataTypes[]}/>
+                <FriendsTable data={friends.data as FriendDataTypes[]}/>
             </section>
         </section>
     )
