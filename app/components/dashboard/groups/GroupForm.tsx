@@ -19,6 +19,7 @@ import * as zod from "zod"
 import { GroupSchema } from '@/schemas/group'
 import { zodResolver } from '@hookform/resolvers/zod'
 import GroupFindMembersInput from './GroupFindMembersInput'
+import GroupTagsInput from './GroupTagsInput'
 
 enum FormLevelEnum {
     Common,
@@ -109,6 +110,7 @@ const GroupForm = () => {
                         )}
                     />
                     <GroupFindMembersInput control={form.control}/>
+                    <GroupTagsInput control={form.control}/>
                     <FormField
                         control={form.control}
                         name="description"

@@ -15,9 +15,7 @@ type PropsTypes = {
 }
 
 const GroupFindMembersInput = ({control}: PropsTypes) => {
-    const session = useSession()
     const inputRef = useRef<HTMLInputElement>(null)
-    const userId = session.data?.user.id
     const [results, setResults] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
     const { fields, append, remove } = useFieldArray({name: "members", control})
