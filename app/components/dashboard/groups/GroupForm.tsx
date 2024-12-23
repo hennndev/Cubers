@@ -1,33 +1,35 @@
 "use client"
-import React, { useState } from 'react'
-import { toast } from 'sonner'
-import { Input } from '@/app/components/ui/input'
-import { Textarea } from '@/app/components/ui/textarea'
-import { Form, FormField, FormItem, FormControl, FormMessage } from '../../ui/form'
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/app/components/ui/select"
-import { useForm } from 'react-hook-form'
-import { Button } from '@/app/components/ui/button'
+import React, { useState, useEffect } from 'react'
 import * as zod from "zod"
-import { GroupSchema } from '@/schemas/group'
-import { zodResolver } from '@hookform/resolvers/zod'
-import GroupFindMembersInput from './GroupFindMembersInput'
-import GroupTagsInput from './GroupTagsInput'
-import { createGroup } from '@/lib/actions/groups/createGroup'
-import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
+import { useForm } from 'react-hook-form'
 import { LuLoader2 } from 'react-icons/lu'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { GroupSchema } from '@/schemas/group'
+import GroupTagsInput from './GroupTagsInput'
+import { Input } from '@/app/components/ui/input'
+import { Button } from '@/app/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Textarea } from '@/app/components/ui/textarea'
+import GroupFindMembersInput from './GroupFindMembersInput'
+import { createGroup } from '@/lib/actions/groups/createGroup'
+import { useGroupStore } from '@/store/groupStore'
+import { Form, FormField, FormItem, FormControl, FormMessage } from '../../ui/form'
+import {  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/app/components/ui/select"
+import { getGroup } from '@/lib/actions/groups/getGroup'
 
-const GroupForm = () => {
+type PropsTypes = {
+    isEditPage?: boolean
+    groupId?: number
+}
+
+const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
+    const router = useRouter()
     const session = useSession()
     const userId = session.data?.user.id
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false)
     const form = useForm<zod.infer<typeof GroupSchema>>({
         resolver: zodResolver(GroupSchema),
         defaultValues: {
@@ -38,6 +40,7 @@ const GroupForm = () => {
             tags: []
         }
     })
+    const { groupTerm, setGroupTerm } = useGroupStore()
     
     const onSubmit = async (values: zod.infer<typeof GroupSchema>) => {
         setIsLoading(true)
@@ -50,13 +53,68 @@ const GroupForm = () => {
             await createGroup(userId as string, transformValues)
             toast.success("New group has created")
             form.reset()
+            router.push("/dashboard/groups")
         } catch (error) {
             toast.error("Failed create new group")
         } finally {
             setIsLoading(false)
         }
     }
+
+    const handleGetGroup = async () => {       
+        const isGroupStored = groupTerm?.id === groupId 
+        if(!groupTerm || !isGroupStored) {
+            setIsLoadingPage(true)
+            const group = await getGroup(groupId as number)
+            if(group.data) {
+                const transformGroupMember = group.data?.members.map(obj => ({
+                    member: obj.username
+                }))
+                const transformTags = group.data.tags.map(tag => ({
+                    tag
+                }))
+                setGroupTerm({
+                    id: group.data.id,
+                    name: group.data.name,
+                    level: group.data.level,
+                    description: group.data.description,
+                    tags: transformTags,
+                    members: transformGroupMember
+                })
+                setIsLoadingPage(false)
+            } 
+            if(!group) {
+                router.push("/dashboard/groups")
+            }
+        }  
+    }
+
+    useEffect(() => {
+        if(isEditPage && groupId) {
+            handleGetGroup()
+        }
+    }, [isEditPage, groupId])
+
+
+    useEffect(() => {
+        if(isEditPage && groupTerm) {
+            form.setValue("name", groupTerm.name)
+            form.setValue("level", groupTerm.level)
+            form.setValue("description", groupTerm.description)
+            form.setValue("members", groupTerm.members)
+            form.setValue("tags", groupTerm.tags)
+        }
+    }, [isEditPage, groupTerm])
     
+
+    if(isEditPage && isLoadingPage) {
+        return (
+            <section className='flex-center flex-col space-y-5'>
+                <p className='animate-pulse'>Loading...</p>
+            </section>
+        )
+    }  
+
     return (
         <section className='px-10'>
             <Form {...form}>

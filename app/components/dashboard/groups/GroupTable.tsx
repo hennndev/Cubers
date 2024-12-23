@@ -5,12 +5,12 @@ import {
     TableBody,
     TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/app/components/ui/table"
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/app/components/ui/button'
 import { removeGroup } from '@/lib/actions/groups/removeGroup'   
 import { leaveGroup } from '@/lib/actions/groups/leaveGroup'
@@ -20,6 +20,7 @@ type PropsTypes = {
 }
 
 const GroupTable = ({data}: PropsTypes) => {
+    const router = useRouter()
     const handleRemoveGroup = async (groupId: number) => {
         try {
             await removeGroup(groupId)
@@ -69,7 +70,7 @@ const GroupTable = ({data}: PropsTypes) => {
                         {new Date(obj.group.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className='text-right space-x-3'>
-                        <Button variant="secondary" size="sm">Edit</Button>
+                        <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/groups/edit-group?id=${obj.group.id}`)}>Edit</Button>
                         <Button variant="destructive" size="sm" onClick={() => {
                             if(obj.roleGroup === "Owner") {
                                 handleRemoveGroup(obj.group.id)

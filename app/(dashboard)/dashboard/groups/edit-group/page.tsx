@@ -1,18 +1,24 @@
-import GroupForm from '@/app/components/dashboard/groups/GroupForm'
 import React from 'react'
-import { LuArrowLeft } from 'react-icons/lu'
+import { redirect } from 'next/navigation'
+import PageHeader from '@/app/components/dashboard/PageHeader'
+import GroupForm from '@/app/components/dashboard/groups/GroupForm'
 
 export const metadata = {
     title: "Edit group"
 }
 
-const CreateGroup = () => {
+const EditGroup = async ({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) => {
+    const id = (await searchParams).id
+    if(!id) {
+        redirect("/dashboard/groups")
+    }
+
     return (
-        <section className='flex-1 w-full py-6 px-10'>
-            <h1 className='text-2xl font-bold tracking-tight mb-5'>Create group</h1>
-            <GroupForm/>
+        <section className='flex-1 w-full pb-10'>
+            <PageHeader title='Edit Group' description='Edit with proper values in group fields'/>
+            <GroupForm isEditPage groupId={+id as number}/>
         </section>
     )
 }
 
-export default CreateGroup
+export default EditGroup
