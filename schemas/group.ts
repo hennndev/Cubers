@@ -9,5 +9,5 @@ export const GroupSchema = zod.object({
     }).array(),
     members: zod.object({
         member: zod.string().min(1)
-    }).array()
+    }).array() 
 })

@@ -9,29 +9,18 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/app/components/ui/table"
+} from "@/app/components/ui/table"
 import { Button } from '@/app/components/ui/button'
 import { useSession } from 'next-auth/react'
    
-  const groups = [
-    {
-      id: 1,
-      name: "Tugas Web Toko Online",
-      tags: ["tugas", "javascript", "python"],
-      link: "1",
-    },
-    {
-      id: 2,
-      name: "Tugas Machine learning",
-      tags: ["tugas", "javascript", "python"],
-      link: "1",
-    },
-  ]
+type PropsTypes = {
+    data: any
+}
 
-const GroupTable = () => {
-  const session = useSession()
-  console.log(session.status)
-
+const GroupTable = ({data}: PropsTypes) => {
+    const session = useSession()
+    console.log(session.status)
+    
     return (
         <Table>
             <TableCaption>A list of group projects.</TableCaption>
@@ -48,23 +37,25 @@ const GroupTable = () => {
             </TableHeader>
 
             <TableBody>
-            {groups.map((group) => (
-                <TableRow key={group.id}>
-                    <TableCell className="font-medium">{group.id}</TableCell>
-                    <TableCell>{group.name}</TableCell>
-                    <TableCell>OWNER</TableCell>
+            {data.map((obj: any, index: number) => (
+                <TableRow key={obj.group.id}>
+                    <TableCell className="font-medium">{index  +1}</TableCell>
+                    <TableCell>{obj.group.name}</TableCell>
+                    <TableCell>{obj.roleGroup}</TableCell>
                     <TableCell>
-                        0 Member
+                        {obj.group.members.length} Member
                     </TableCell>
                     <TableCell>
                         <Button variant="secondary" size="sm">Open Group</Button>
                     </TableCell>
                     <TableCell>
-                        {new Date().toLocaleDateString()}
+                        {new Date(obj.group.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className='text-right space-x-3'>
                         <Button variant="secondary" size="sm">Edit</Button>
-                        <Button variant="destructive" size="sm">Remove</Button>
+                        <Button variant="destructive" size="sm">
+                            {obj.roleGroup === "Owner" ? "Remove group" : "Leave group"}
+                        </Button>
                     </TableCell>
                 </TableRow>
             ))}

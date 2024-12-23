@@ -13,46 +13,43 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/app/components/ui/select"
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { Button } from '@/app/components/ui/button'
 import * as zod from "zod"
 import { GroupSchema } from '@/schemas/group'
 import { zodResolver } from '@hookform/resolvers/zod'
 import GroupFindMembersInput from './GroupFindMembersInput'
 import GroupTagsInput from './GroupTagsInput'
-
-enum FormLevelEnum {
-    Common,
-    Middle,
-    Priority
-}
-
-type FormTypes = {
-    name: string
-    description: string
-    level: FormLevelEnum
-    members: String[]
-    tags: String[] 
-}
+import { createGroup } from '@/lib/actions/groups/createGroup'
+import { useSession } from 'next-auth/react'
+import { LuLoader2 } from 'react-icons/lu'
 
 const GroupForm = () => {
+    const session = useSession()
+    const userId = session.data?.user.id
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const form = useForm<zod.infer<typeof GroupSchema>>({
         resolver: zodResolver(GroupSchema),
         defaultValues: {
-                name: "",
-                description: "",
-                level: "Common",
-                members: [],
-                tags: []
+            name: "",
+            description: "",
+            level: "Common",
+            members: [],
+            tags: []
         }
     })
     
     const onSubmit = async (values: zod.infer<typeof GroupSchema>) => {
         setIsLoading(true)
         try {
-            
+            const transformValues = {
+                ...values,
+                members: values.members.map(obj => obj.member),
+                tags: values.tags.map(obj => obj.tag)
+            }
+            await createGroup(userId as string, transformValues)
             toast.success("New group has created")
+            form.reset()
         } catch (error) {
             toast.error("Failed create new group")
         } finally {
@@ -84,7 +81,7 @@ const GroupForm = () => {
                     />
                     <FormField
                         control={form.control}
-                        name="name"
+                        name="level"
                         render={({ field }) => (
                             <FormItem className='flex flex-col space-y-1.5 mb-5'>
                                 <label htmlFor='level' className='text-md'>
@@ -99,9 +96,9 @@ const GroupForm = () => {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>Choose group level</SelectLabel>
-                                            <SelectItem value="common">Common</SelectItem>
-                                            <SelectItem value="middle">Middle</SelectItem>
-                                            <SelectItem value="priority">Priority</SelectItem>
+                                            <SelectItem value="Common">Common</SelectItem>
+                                            <SelectItem value="Middle">Middle</SelectItem>
+                                            <SelectItem value="Priority">Priority</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -109,8 +106,8 @@ const GroupForm = () => {
                             </FormItem>
                         )}
                     />
-                    <GroupFindMembersInput control={form.control}/>
-                    <GroupTagsInput control={form.control}/>
+                    <GroupFindMembersInput isLoading={isLoading} control={form.control}/>
+                    <GroupTagsInput isLoading={isLoading} control={form.control}/>
                     <FormField
                         control={form.control}
                         name="description"
@@ -120,17 +117,18 @@ const GroupForm = () => {
                                     Description <span className='text-red-500'>*</span>
                                 </label>
                                 <FormControl id='description'>
-                                <Textarea 
-                                    {...field}
-                                    rows={7}
-                                    placeholder='Input group description'/>
-                                </FormControl>
+                                    <Textarea 
+                                        {...field}
+                                        disabled={isLoading}
+                                        rows={7}
+                                        placeholder='Input group description'/>
+                                    </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                     <Button disabled={isLoading}>
-                        Submit new group
+                        {isLoading && <LuLoader2 className='animate-spin'/>} {isLoading ? "Loading" : "Submit new group"}
                     </Button>
                 </form>
             </Form>

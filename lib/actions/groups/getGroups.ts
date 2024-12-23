@@ -8,15 +8,15 @@ export const getGroups = async (userId: string) => {
         }
         const groups = await prisma.user.findUnique({
             where: {
-                id: userId
+                id: userId,
             },
             select: {
-                groups: {
-                    include: {
-                        members: {
-                            select: {
-                                roleGroup: true,
-                                role: true
+                groupsMember: {
+                    select: {
+                        roleGroup: true,
+                        group: {
+                            include: {
+                                members: true
                             }
                         }
                     }

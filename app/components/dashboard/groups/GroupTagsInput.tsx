@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef } from 'react'
-import * as zod from "zod"
+import { z } from "zod"
 import { LuX } from 'react-icons/lu'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
@@ -10,13 +10,17 @@ import { GroupSchema } from '@/schemas/group'
 import { useFieldArray } from 'react-hook-form'
 
 type PropsTypes = {
-    control: Control<zod.infer<typeof GroupSchema>>
+    isLoading: boolean
+    control: Control<z.infer<typeof GroupSchema>>
 }
 
-const GroupTagsInput = ({control}: PropsTypes) => {
+const GroupTagsInput = ({isLoading, control}: PropsTypes) => {
     const inputRef = useRef<HTMLInputElement>(null)
     const [tagTerm, setTagTerm] = useState<string>("")
-    const { fields, append, remove } = useFieldArray({name: "tags", control})
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "tags", 
+    })
 
     const handleAddTag = () => {
         append({tag: tagTerm.trim().replaceAll(" ", "")})
@@ -25,7 +29,7 @@ const GroupTagsInput = ({control}: PropsTypes) => {
     }
 
     const isAdded = () => {
-        return fields.find(field => field.tag === tagTerm)
+        return fields.find(field => field.id === tagTerm)
     }
 
     return (
@@ -33,12 +37,13 @@ const GroupTagsInput = ({control}: PropsTypes) => {
             <label htmlFor="name" className='text-base'>Tags</label>
             <section className='flexx space-x-3'>
                 <Input 
+                    disabled={isLoading}
                     type='text' 
                     ref={inputRef}
                     value={tagTerm}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTagTerm(e.target.value.trim().replaceAll(" ", ""))}
                     placeholder='Input group name'/>
-                <Button disabled={!tagTerm || Boolean(isAdded())} type='button' variant="outline" onClick={handleAddTag}>Add Tag</Button>
+                <Button disabled={!tagTerm || Boolean(isAdded()) || isLoading} type='button' variant="outline" onClick={handleAddTag}>Add Tag</Button>
             </section>
             {fields.length > 0 && (
                 <div className="flexx flex-wrap !mt-4">

@@ -123,7 +123,7 @@ model DetailWorker {
 model Group {
   id            Int           @id @default(autoincrement())
   groupOwnerId  String
-  groupOwner    User          @relation(fields: [groupOwnerId], references: [id])
+  groupOwner    User          @relation(fields: [groupOwnerId], references: [id], onDelete: Cascade)
   name          String
   level         GroupLevel   
   description   String
@@ -136,31 +136,31 @@ model Group {
 }
 
 enum GroupLevel {
-  COMMON
-  MIDDLE
-  PRIORITY
+  Common
+  Middle
+  Priority
 }
 
 model GroupMember {
   id            Int        @id @default(autoincrement())
-  roleGroup     RoleGroup  @default(MEMBER)
+  roleGroup     RoleGroup  @default(Member)
   role          String?
-  userId        String
-  user          User       @relation(fields: [userId], references: [id])
+  username      String
+  user          User       @relation(fields: [username], references: [username], onDelete: Cascade)
   groupId       Int 
-  group         Group      @relation(fields: [groupId], references: [id])
+  group         Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
   tasks         Task[]
   createdAt     DateTime   @default(now())
   
   @@map("group_member")
-  @@index([userId])
+  @@index([username])
   @@index([groupId])
 }
 
 enum RoleGroup {
-  OWNER
-  ADMIN
-  MEMBER
+  Owner
+  Admin
+  Member
 }
 
 model Task {

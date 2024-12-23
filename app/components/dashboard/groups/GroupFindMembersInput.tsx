@@ -1,9 +1,8 @@
 "use client"
 import React, { useState, useRef } from 'react'
+import { z } from "zod"
 import { debounce } from 'lodash'
-import * as zod from "zod"
 import { LuX } from 'react-icons/lu'
-import { useSession } from 'next-auth/react'
 import { GroupSchema } from '@/schemas/group'
 import { Input } from '@/app/components/ui/input'
 import { Control, useFieldArray } from 'react-hook-form'
@@ -11,14 +10,18 @@ import { findUsers } from '@/lib/actions/users/findUsers'
 import SelectedSearchUser from '@/app/components/utils/SelectedSearchUser'
 
 type PropsTypes = {
-    control: Control<zod.infer<typeof GroupSchema>>
+    isLoading: boolean
+    control: Control<z.infer<typeof GroupSchema>>
 }
 
-const GroupFindMembersInput = ({control}: PropsTypes) => {
+const GroupFindMembersInput = ({isLoading, control}: PropsTypes) => {
     const inputRef = useRef<HTMLInputElement>(null)
     const [results, setResults] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
-    const { fields, append, remove } = useFieldArray({name: "members", control})
+    const { fields, append, remove } = useFieldArray({ 
+        control, 
+        name: "members" 
+    })
 
     const debouncedSearchUsers = debounce(async (keyword) => {
         const results = await findUsers(keyword)
@@ -31,6 +34,7 @@ const GroupFindMembersInput = ({control}: PropsTypes) => {
     }
 
     const handleAddMember = (e: React.MouseEvent<HTMLButtonElement>, member: string) => {
+        e.stopPropagation()
         append({member: member})
         setSearchTerm("")
         inputRef.current?.focus()
@@ -45,6 +49,7 @@ const GroupFindMembersInput = ({control}: PropsTypes) => {
             <section className='flex flex-col space-y-1.5'>
                 <label htmlFor="name" className='text-base'>Find and invite member</label>
                 <Input 
+                    disabled={isLoading}
                     type='text' 
                     ref={inputRef}
                     value={searchTerm}
@@ -67,7 +72,7 @@ const GroupFindMembersInput = ({control}: PropsTypes) => {
                     utilClass="!top-20"
                     results={results} 
                     isAdded={(member: string) => Boolean(isAdded(member))}
-                    handleAdd={(e: React.MouseEvent<HTMLButtonElement>, memberId: string) => handleAddMember(e, memberId)}/>
+                    handleAdd={(e: React.MouseEvent<HTMLButtonElement>, member: string) => handleAddMember(e, member)}/>
             )}
         </section>
     )

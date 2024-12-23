@@ -31,7 +31,7 @@ const Group = async () => {
             </PageHeader>
             <section className='flex flex-col space-y-6 px-10 h-screen'>
                 <GroupTableHeader/>
-                <GroupTable/>
+                <GroupTable data={groups.data?.groupsMember}/>
             </section>
         </section>
     )
