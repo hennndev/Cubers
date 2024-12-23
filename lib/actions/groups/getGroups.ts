@@ -13,6 +13,7 @@ export const getGroups = async (userId: string) => {
             select: {
                 groupsMember: {
                     select: {
+                        id: true,
                         roleGroup: true,
                         group: {
                             include: {

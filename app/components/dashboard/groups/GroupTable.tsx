@@ -10,17 +10,34 @@ import {
     TableHeader,
     TableRow,
 } from "@/app/components/ui/table"
+import { toast } from 'sonner'
 import { Button } from '@/app/components/ui/button'
-import { useSession } from 'next-auth/react'
-   
+import { removeGroup } from '@/lib/actions/groups/removeGroup'   
+import { leaveGroup } from '@/lib/actions/groups/leaveGroup'
+
 type PropsTypes = {
     data: any
 }
 
 const GroupTable = ({data}: PropsTypes) => {
-    const session = useSession()
-    console.log(session.status)
-    
+    const handleRemoveGroup = async (groupId: number) => {
+        try {
+            await removeGroup(groupId)
+            toast.success("Group has removed")
+        } catch (error) {
+            toast.error("Group has failed to removed")
+        }
+    } 
+
+    const handleLeaveGroup = async (groupMemberId: number) => {
+        try {
+            await leaveGroup(groupMemberId)
+            toast.success("You're leave the group")
+        } catch (error) {
+            toast.error("Failed leave group")
+        }
+    }
+
     return (
         <Table>
             <TableCaption>A list of group projects.</TableCaption>
@@ -53,7 +70,13 @@ const GroupTable = ({data}: PropsTypes) => {
                     </TableCell>
                     <TableCell className='text-right space-x-3'>
                         <Button variant="secondary" size="sm">Edit</Button>
-                        <Button variant="destructive" size="sm">
+                        <Button variant="destructive" size="sm" onClick={() => {
+                            if(obj.roleGroup === "Owner") {
+                                handleRemoveGroup(obj.group.id)
+                            } else {
+                                handleLeaveGroup(obj.id)
+                            }
+                        }}>
                             {obj.roleGroup === "Owner" ? "Remove group" : "Leave group"}
                         </Button>
                     </TableCell>
