@@ -70,7 +70,11 @@ const GroupTable = ({data}: PropsTypes) => {
                         {new Date(obj.group.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className='text-right space-x-3'>
-                        <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/groups/edit-group?id=${obj.group.id}`)}>Edit</Button>
+                        {obj.roleGroup === "Owner" && (
+                            <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/groups/edit-group?id=${obj.group.id}`)}>
+                                Edit
+                            </Button>
+                        )}
                         <Button variant="destructive" size="sm" onClick={() => {
                             if(obj.roleGroup === "Owner") {
                                 handleRemoveGroup(obj.group.id)

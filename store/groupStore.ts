@@ -3,7 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import * as zod from "zod"
 import { GroupSchema } from '@/schemas/group'
 
-type GroupTerm = zod.infer<typeof GroupSchema> & { id: number } | null
+type GroupTerm = zod.infer<typeof GroupSchema> & { 
+    id: number,
+    groupOwner: {
+        id: string
+    }
+ } | null
 
 type GroupStoreTypes = {
     groupTerm: GroupTerm

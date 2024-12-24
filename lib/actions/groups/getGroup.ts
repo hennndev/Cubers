@@ -16,7 +16,12 @@ export const getGroup = async (groupId: number) => {
                 level: true,
                 tags: true,
                 description: true,
-                members: true
+                members: true,
+                groupOwner: {
+                    select: {
+                        id: true
+                    }
+                }
             }
         })
         console.log(group)
