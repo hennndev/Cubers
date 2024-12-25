@@ -6,18 +6,18 @@ export const findUsers = async (keyword: string) => {
     const users = await prisma.user.findMany({
         where: {
             OR: [
-                {
-                    username: {
-                        contains: keyword,
-                        mode: "insensitive"
+                    {
+                        username: {
+                            contains: keyword,
+                            mode: "insensitive"
+                        }
+                    },
+                    {
+                        email: {
+                            contains: keyword,
+                            mode: "insensitive"
+                        }
                     }
-                },
-                {
-                    email: {
-                        contains: keyword,
-                        mode: "insensitive"
-                    }
-                }
             ]
         },
         select: {

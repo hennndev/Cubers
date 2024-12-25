@@ -13,12 +13,11 @@ export const metadata = {
     title: "Groups"
 }
 
-const Group = async () => {
+const Group = async ({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) => {
     const session = await getServerSession(authOptions)
     const userId = session?.user.id
-    
-    const groups = await getGroups(userId as string)
-    console.log(groups)
+    const querySearch = (await searchParams).q || "" 
+    const groups = await getGroups(userId as string, querySearch as string)
 
     return (
         <section className='flex-1 pb-10'>
