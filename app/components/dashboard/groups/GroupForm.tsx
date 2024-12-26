@@ -55,12 +55,12 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
             if(!isEditPage) {
                 await createGroup(userId as string, transformValues)
                 toast.success("New group has created")
+                router.push("/dashboard/groups")
             } else {
                 await editGroup(userId as string, groupTerm?.id as number, transformValues)
                 toast.success("Group has updated")
+                router.push("/dashboard/groups")
             }
-            form.reset()
-            router.push("/dashboard/groups")
         } catch (error) {
             toast.error("Failed create new group")
         } finally {
@@ -114,10 +114,10 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
     }, [isEditPage, groupTerm])
    
     useEffect(() => {
-        if(groupTerm && userId && userId !== groupTerm.groupOwner.id) {
+        if(isEditPage && groupTerm && userId && userId !== groupTerm.groupOwner.id) {
             router.push("/dashboard/groups")
         }
-    }, [groupTerm, userId, router])
+    }, [isEditPage, groupTerm, userId, router])
 
     if(isEditPage && isLoadingPage) {
         return (

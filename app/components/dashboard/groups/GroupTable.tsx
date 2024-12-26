@@ -40,10 +40,12 @@ const GroupTable = ({data}: PropsTypes) => {
             toast.error("Group has failed to removed")
         }
     } 
-
+    
     const handleLeaveGroup = async (groupMemberId: number) => {
         try {
             await leaveGroup(groupMemberId)
+            const updatedDataInClientSide = dataClientSide.filter((data: any) => data.id !== groupMemberId)
+            setDataClientSide(updatedDataInClientSide)
             toast.success("You're leave the group")
         } catch (error) {
             toast.error("Failed leave group")
