@@ -1,8 +1,10 @@
 import React from 'react'
-import PageHeader from '@/app/components/dashboard/PageHeader'
 import Link from 'next/link'
-import { Button } from '@/app/components/ui/button'
 import { LuPlus } from 'react-icons/lu'
+import { Button } from '@/app/components/ui/button'
+import PageHeader from '@/app/components/dashboard/PageHeader'
+import ProjectsTable from '@/app/components/dashboard/projects/ProjectsTable'
+import ProjectsTableHeader from '@/app/components/dashboard/projects/ProjectsTableHeader'
 
 export const metadata = {
     title: "Cubers | Projects"
@@ -18,6 +20,10 @@ const Projects = () => {
                     </Link>
                 </Button>
             </PageHeader>
+            <section className='flex flex-col space-y-6 px-10 h-screen'>
+                <ProjectsTableHeader/>
+                <ProjectsTable/>
+            </section>
         </section>
     )
 }

@@ -4,10 +4,10 @@ import { LuPlus } from 'react-icons/lu'
 import { getServerSession } from 'next-auth'
 import { Button } from '@/app/components/ui/button'
 import { authOptions } from '@/lib/config/authOptions'
+import { getGroups } from '@/lib/actions/groups/getGroups'
+import PageHeader from '@/app/components/dashboard/PageHeader'
 import GroupTable from '@/app/components/dashboard/groups/GroupTable'
 import GroupTableHeader from '@/app/components/dashboard/groups/GroupTableHeader'
-import PageHeader from '@/app/components/dashboard/PageHeader'
-import { getGroups } from '@/lib/actions/groups/getGroups'
 
 export const metadata = {
     title: "Groups"
