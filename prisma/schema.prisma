@@ -56,11 +56,18 @@ model User {
   loginMethod     LoginMethod     @default(CREDENTIALS)
   userDetailId    Int?            @unique
   detail          UserDetail?     @relation(fields: [userDetailId], references: [id])
+  
   groupsMember    GroupMember[]
   groups          Group[]
           
   friends         User[]          @relation("Friends")
   friendOf        User[]          @relation("Friends")
+  
+  projects        Project[]
+  projectsMember  ProjectMember[]
+  RoleProject     RoleProject[]
+
+
   accounts        Account[]
   sessions        Session[]
   createdAt       DateTime        @default(now())
@@ -120,6 +127,7 @@ model DetailWorker {
 }
 
 
+// ==========GROUP==========
 model Group {
   id            Int           @id @default(autoincrement())
   groupOwnerId  String
@@ -149,7 +157,6 @@ model GroupMember {
   user          User       @relation(fields: [username], references: [username], onDelete: Cascade)
   groupId       Int 
   group         Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  tasks         Task[]
   createdAt     DateTime   @default(now())
   
   @@map("group_member")
@@ -163,17 +170,73 @@ enum RoleGroup {
   Member
 }
 
-model Task {
-  id          Int             @id @default(autoincrement())
-  name        String
-  description String
-  status      TaskStatus      @default(ToDo)
-  assigneeId  Int
-  assignee    GroupMember     @relation(fields: [assigneeId], references: [id])
-  review      String
-  createdAt   DateTime        @default(now())
 
-  @@map("task")
+
+
+// ==========PROJECT==========
+model Project {
+  id              Int             @id @default(autoincrement())
+  name            String
+  description     String
+  roles           Role[]  
+  tags            String[]
+  projectOwnerId  String
+  projectOwner    User            @relation(fields: [projectOwnerId], references: [id])
+  tasks           Task[]
+  rolesProject    RoleProject[]
+  members         ProjectMember[]
+  
+  createdAt       DateTime  @default(now())
+
+  @@map("projects")
+}
+
+model Role {
+  id            Int       @id @default(autoincrement())
+  name          String
+  projects      Project[]
+  rolesProject  RoleProject[]
+  createdAt     DateTime  @default(now())
+
+  @@map("roles")
+}
+
+model ProjectMember {
+  id            Int           @id  @default(autoincrement())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  projects      Project[]
+  
+  createdAt     DateTime   @default(now())
+  
+  @@map("project_member")
+}
+
+model RoleProject {
+  id              Int       @id @default(autoincrement())
+  roleId          Int
+  role            Role      @relation(fields: [roleId], references: [id])
+  userId          String  
+  user            User      @relation(fields: [userId], references: [id])
+  projects        Project[]
+  tasks           Task[]
+  createdAt       DateTime  @default(now())
+
+  @@map("role_project")  
+}
+
+model Task {
+  id              Int             @id @default(autoincrement())
+  name            String
+  description     String
+  status          TaskStatus      @default(ToDo)
+  assigneeId      Int
+  assignee        RoleProject     @relation(fields: [assigneeId], references: [id])
+  review          String
+  createdAt       DateTime        @default(now())
+  Project         Project[]
+
+  @@map("tasks")
 }
 
 enum TaskStatus {
@@ -183,4 +246,3 @@ enum TaskStatus {
   Revision
   Done
 }
-
