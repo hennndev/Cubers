@@ -32,9 +32,11 @@ const GroupTable = ({data}: PropsTypes) => {
     const [dataClientSide, setDataClientSide] = useState(data)
     const queriesStr = queryString.parse(window.location.search)
 
-    const handleRemoveGroup = async (groupId: number) => {
+    const handleRemoveGroup = async (groupId: number, groupMemberId: number) => {
         try {
             await removeGroup(groupId)
+            const updatedDataInClientSide = dataClientSide.filter((data: any) => data.id !== groupMemberId)
+            setDataClientSide(updatedDataInClientSide)
             toast.success("Group has removed")
         } catch (error) {
             toast.error("Group has failed to removed")
@@ -130,7 +132,7 @@ const GroupTable = ({data}: PropsTypes) => {
                             )}
                             <Button variant="destructive" size="sm" onClick={() => {
                                 if(obj.roleGroup === "Owner") {
-                                    handleRemoveGroup(obj.group.id)
+                                    handleRemoveGroup(obj.group.id, obj.id)
                                 } else {
                                     handleLeaveGroup(obj.id)
                                 }

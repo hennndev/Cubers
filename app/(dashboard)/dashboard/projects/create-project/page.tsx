@@ -1,16 +1,18 @@
 import React from 'react'
 import PageHeader from '@/app/components/dashboard/PageHeader'
+import ProjectForm from '@/app/components/dashboard/projects/ProjectForm'
 
 export const metadata = {
-    title: "Create group"
+    title: "Cubers | Create project"
 }
 
-const CreateGroup = () => {
+const CreateProject = () => {
     return (
         <section className='flex-1 w-full pb-10'>
             <PageHeader title='Create Project' description='Create and configuration your new project'/>
+            <ProjectForm/>
         </section>
     )
 }
 
-export default CreateGroup
+export default CreateProject

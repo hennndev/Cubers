@@ -44,7 +44,7 @@ model Session {
 }
 
 
-
+// ==========USER==========
 model User {
   id              String          @id
   name            String
@@ -57,30 +57,28 @@ model User {
   userDetailId    Int?            @unique
   detail          UserDetail?     @relation(fields: [userDetailId], references: [id])
   
-  groupsMember    GroupMember[]
   groups          Group[]
+  groupsMember    GroupMember[]
           
   friends         User[]          @relation("Friends")
   friendOf        User[]          @relation("Friends")
   
   projects        Project[]
   projectsMember  ProjectMember[]
-  RoleProject     RoleProject[]
-
+  roleProject     RoleProject[]
 
   accounts        Account[]
   sessions        Session[]
+  
   createdAt       DateTime        @default(now())
 
   @@map("users")
   @@index([userDetailId])
 }
-
 enum LoginMethod {
   CREDENTIALS
   GOOGLE
 }
-
 model UserDetail {
   id                Int               @id @default(autoincrement())
   status            UserStatus        @default(STUDENT)
@@ -101,12 +99,10 @@ model UserDetail {
   @@index([detailStudentId])
   @@index([detailWorkerId])
 }
-
 enum UserStatus {
   STUDENT
   WORKER
 }
-
 model DetailStudent {
   id            Int     @id
   university    String
@@ -116,7 +112,6 @@ model DetailStudent {
 
   @@map("detail_student")
 }
-
 model DetailWorker {
   id          Int       @id
   job         String
@@ -125,6 +120,8 @@ model DetailWorker {
 
   @@map("detail_worker")
 }
+
+
 
 
 // ==========GROUP==========
@@ -142,18 +139,16 @@ model Group {
   @@map("groups")
   @@index([groupOwnerId])
 }
-
 enum GroupLevel {
   Common
   Middle
   Priority
 }
-
 model GroupMember {
   id            Int        @id @default(autoincrement())
   roleGroup     RoleGroup  @default(Member)
   role          String?
-  username      String
+  username      String     
   user          User       @relation(fields: [username], references: [username], onDelete: Cascade)
   groupId       Int 
   group         Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -163,7 +158,6 @@ model GroupMember {
   @@index([username])
   @@index([groupId])
 }
-
 enum RoleGroup {
   Owner
   Admin
@@ -177,6 +171,7 @@ enum RoleGroup {
 model Project {
   id              Int             @id @default(autoincrement())
   name            String
+  level           ProjectLevel
   description     String
   roles           Role[]  
   tags            String[]
@@ -186,32 +181,43 @@ model Project {
   rolesProject    RoleProject[]
   members         ProjectMember[]
   
-  createdAt       DateTime  @default(now())
+  createdAt       DateTime        @default(now())
 
   @@map("projects")
 }
-
+enum ProjectLevel {
+  Common
+  Middle
+  Priority
+}
 model Role {
   id            Int       @id @default(autoincrement())
-  name          String
+  role          String
   projects      Project[]
   rolesProject  RoleProject[]
   createdAt     DateTime  @default(now())
 
   @@map("roles")
 }
-
 model ProjectMember {
-  id            Int           @id  @default(autoincrement())
-  userId        String
-  user          User          @relation(fields: [userId], references: [id])
-  projects      Project[]
+  id                    Int                   @id  @default(autoincrement())
+  username              String                @unique
+  user                  User                  @relation(fields: [username], references: [username], onDelete: Cascade)
+  projectId             Int                   @unique
+  project               Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  roleProjectControl    RoleProjectControl    @default(Member)
   
-  createdAt     DateTime   @default(now())
+  createdAt             DateTime              @default(now())
   
   @@map("project_member")
+  @@index([username])
+  @@index([projectId])
 }
-
+enum RoleProjectControl {
+  Owner
+  Admin
+  Member
+}   
 model RoleProject {
   id              Int       @id @default(autoincrement())
   roleId          Int
@@ -224,10 +230,9 @@ model RoleProject {
 
   @@map("role_project")  
 }
-
 model Task {
   id              Int             @id @default(autoincrement())
-  name            String
+  task            String
   description     String
   status          TaskStatus      @default(ToDo)
   assigneeId      Int
@@ -238,7 +243,6 @@ model Task {
 
   @@map("tasks")
 }
-
 enum TaskStatus {
   ToDo
   InProgress
