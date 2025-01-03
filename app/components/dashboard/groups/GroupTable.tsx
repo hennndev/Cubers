@@ -18,6 +18,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { leaveGroup } from '@/lib/actions/groups/leaveGroup'
 import { removeGroup } from '@/lib/actions/groups/removeGroup'   
 import { debounce } from 'lodash'
+import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
 
 type PropsTypes = {
     data: any
@@ -130,15 +131,21 @@ const GroupTable = ({data}: PropsTypes) => {
                                     Edit
                                 </Button>
                             )}
-                            <Button variant="destructive" size="sm" onClick={() => {
-                                if(obj.roleGroup === "Owner") {
-                                    handleRemoveGroup(obj.group.id, obj.id)
-                                } else {
-                                    handleLeaveGroup(obj.id)
-                                }
-                            }}>
-                                {obj.roleGroup === "Owner" ? "Remove group" : "Leave group"}
-                            </Button>
+                            <ModalConfirmButton 
+                                modalType='remove'
+                                modalTitle='Are you sure want to remove this group?'
+                                modalText='This group will deleted permanently'
+                                handleConfirm={() => {
+                                    if(obj.roleGroup === "Owner") {
+                                        handleRemoveGroup(obj.group.id, obj.id)
+                                    } else {
+                                        handleLeaveGroup(obj.id)
+                                    }
+                                }}>
+                                <Button variant="destructive" size="sm">
+                                    {obj.roleGroup === "Owner" ? "Remove group" : "Leave group"}
+                                </Button>
+                            </ModalConfirmButton>
                         </TableCell>
                     </TableRow>
                 ))}

@@ -15,6 +15,7 @@ import { useSession } from 'next-auth/react'
 import { Button } from '@/app/components/ui/button'
 import { useRouter, useSearchParams } from 'next/navigation'  
 import { debounce } from 'lodash'
+import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
 import { removeProject } from '@/lib/actions/projects/removeProject'
 
 type PropsTypes = {
@@ -29,8 +30,6 @@ const ProjectsTable = ({data}: PropsTypes) => {
     const [isClient, setIsClient] = useState<boolean>(false)
     const [dataClientSide, setDataClientSide] = useState(data)
     const queriesStr = queryString.parse(window.location.search)
-
-    console.log(data)
 
     const handleRemoveProject = async (projectIdd: number, projectMemberId: number) => {
             try {
@@ -76,9 +75,15 @@ const ProjectsTable = ({data}: PropsTypes) => {
                             <Button variant="secondary" size="sm">
                                 Edit
                             </Button>
-                            <Button variant="destructive" size="sm" onClick={() => handleRemoveProject(obj.project.id, obj.id)}>
-                                Remove project
-                            </Button>
+                            <ModalConfirmButton 
+                                modalType='remove'
+                                modalTitle='Are you sure want to remove this project?'
+                                modalText='This project will deleted permanently'
+                                handleConfirm={() => handleRemoveProject(obj.project.id, obj.id)}>
+                                <Button variant="destructive" size="sm">
+                                    Remove project
+                                </Button>
+                            </ModalConfirmButton>
                         </TableCell>
                     </TableRow>
                 ))}
