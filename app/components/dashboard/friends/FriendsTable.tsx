@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import {
     Table,
     TableBody,
@@ -8,11 +8,12 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/app/components/ui/table"
-import { Button } from '@/app/components/ui/button'
-import { useSession } from 'next-auth/react'
-import { removeFriend } from '@/lib/actions/users/removeFriend'
+} from "@/app/components/ui/table"
 import { toast } from 'sonner'
+import { useSession } from 'next-auth/react'
+import { Button } from '@/app/components/ui/button'
+import { removeFriend } from '@/lib/actions/users/removeFriend'
+import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
 
 type PropsTypes = {
     data: FriendDataTypes[]
@@ -60,7 +61,15 @@ const FriendsTable = ({data}: PropsTypes) => {
                             <Button variant="secondary" size="sm">User Detail</Button>
                         </TableCell>
                         <TableCell className='text-right space-x-3'>
-                            <Button variant="destructive" size="sm" onClick={() => handleRemoveFriend(obj.id)}>Remove</Button>
+                            <ModalConfirmButton
+                                modalType='remove'
+                                modalTitle='Are you sure want to remove your friend?'
+                                modalText='Your friend will deleted permanently'
+                                handleConfirm={() => handleRemoveFriend(obj.id)}>
+                                <Button variant="destructive" size="sm">
+                                    Remove
+                                </Button>
+                            </ModalConfirmButton>
                         </TableCell>
                     </TableRow>
                 ))}

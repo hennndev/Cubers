@@ -7,6 +7,7 @@ import { LoginSchema } from '@/schemas/auth'
 import GoogleProvider from 'next-auth/providers/google'
 import Credentials from "next-auth/providers/credentials"
 import { receiveEmailVerification, receiveEmailWelcome } from '../actions/emails/emailAction'
+import { cookies } from 'next/headers'
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -17,9 +18,14 @@ export const authOptions: NextAuthOptions = {
         }),
         Credentials({
             name: 'credentials',
+            credentials: {
+                email: { label: "Email", type: "text" },
+                password: { label: "Password", type: "password" },
+                rememberMe: { label: "Remember Me", type: "text" }, // Optional
+            },
             //@ts-ignore
             async authorize(credentials) {
-                const fields = LoginSchema.parse(credentials)
+                const fields = LoginSchema.parse({...credentials, rememberMe: credentials?.rememberMe === "true" ? true : false})
                 const user = await prisma.user.findUnique({
                     where: {
                         email: fields.email
@@ -38,7 +44,6 @@ export const authOptions: NextAuthOptions = {
                 if(!user) {
                     throw new Error("Email not found")
                 }
-                if(user)
                 if(user && user.loginMethod === "GOOGLE") {
                     throw new Error("This account already registered using google")
                 }
@@ -50,7 +55,6 @@ export const authOptions: NextAuthOptions = {
                     const { password, ...userData } = user
 
                     if(!userData.emailVerified) {
-                        console.log(user)
                         // token untuk akses halaman verified your email
                         const token = createToken(user.email, process.env.LOGIN_REDIRECT_EMAIL_VERIFICATION_SECRET as string, 60 * 5)
                         // kemudian mengirimkan verifikasi email ke email tujuan
@@ -59,6 +63,13 @@ export const authOptions: NextAuthOptions = {
                             error: "Email not verified",
                             token
                         }))
+                    }
+                    console.log(fields.rememberMe)
+                    const cookieStore = await cookies()
+                    if(fields.rememberMe) {
+                        cookieStore.set("rememberMe", fields.email, {secure: true})
+                    } else {
+                        cookieStore.delete("rememberMe")
                     }
                     return userData
                 }
