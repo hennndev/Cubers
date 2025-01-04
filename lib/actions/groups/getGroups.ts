@@ -6,10 +6,12 @@ export const getGroups = async (userId: string, keyword: string) => {
         if(!userId) {
             throw new Error("Something went wrong")
         }
+        // get user by id
         const groups = await prisma.user.findUnique({
             where: {
                 id: userId,
             },
+            // lalu cari berdasarkan groupMember
             select: {
                 groupsMember: {
                     select: {
@@ -21,6 +23,7 @@ export const getGroups = async (userId: string, keyword: string) => {
                             },
                         }
                     },
+                    // dynamic filter by name/groupOwner/tags
                     where: {
                         group: {
                             OR: [
@@ -54,6 +57,11 @@ export const getGroups = async (userId: string, keyword: string) => {
                                     }
                                 }
                             ]
+                        }
+                    },
+                    orderBy: {
+                        group: {
+                            createdAt: "desc"
                         }
                     }
                 }

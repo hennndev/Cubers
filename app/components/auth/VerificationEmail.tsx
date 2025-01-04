@@ -1,12 +1,13 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import clsx from 'clsx'
+import { useRouter } from 'next/navigation'
+import useDecodedToken from '@/app/hooks/useDecodedToken'
+import { verifiedEmail } from '@/lib/actions/auth/verifiedEmail'
+// components
 import { FaCheck } from "react-icons/fa"
 import { FaXmark } from "react-icons/fa6"
-import { useRouter } from 'next/navigation'
 import { Button } from '@/app/components/ui/button'
-import { verifiedEmail } from '@/lib/actions/auth/verifiedEmail'
-import useDecodedToken from '@/app/hooks/useDecodedToken'
 
 type PropsTypes = {
     token: string

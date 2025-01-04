@@ -1,11 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
-import { LuPlus } from 'react-icons/lu'
 import { getServerSession } from 'next-auth'
-import { Button } from '@/app/components/ui/button'
 import { authOptions } from '@/lib/config/authOptions'
-import PageHeader from '@/app/components/dashboard/PageHeader'
 import { getProjects } from '@/lib/actions/projects/getProjects'
+// components
+import { LuPlus } from 'react-icons/lu'
+import { Button } from '@/app/components/ui/button'
+import PageHeader from '@/app/components/dashboard/PageHeader'
 import ProjectsTable from '@/app/components/dashboard/projects/ProjectsTable'
 import ProjectsTableHeader from '@/app/components/dashboard/projects/ProjectsTableHeader'
 
@@ -15,7 +16,9 @@ export const metadata = {
 
 const Projects = async ({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) => {
     const session = await getServerSession(authOptions)
+    // mengambil userId dari session login
     const userId = session?.user.id
+    // mengambil query q sebagai keyword get projects
     const querySearch = (await searchParams).q || "" 
     const projects = await getProjects(userId as string, querySearch as string)
 

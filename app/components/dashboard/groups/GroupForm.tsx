@@ -3,21 +3,22 @@ import React, { useState, useEffect } from 'react'
 import * as zod from "zod"
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
-import { LuLoader2 } from 'react-icons/lu'
-import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { GroupSchema } from '@/schemas/group'
-import GroupTagsInput from './GroupTagsInput'
-import { Input } from '@/app/components/ui/input'
-import { Button } from '@/app/components/ui/button'
 import { useGroupStore } from '@/store/groupStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Textarea } from '@/app/components/ui/textarea'
+import { useRouter, usePathname } from 'next/navigation'
 import { getGroup } from '@/lib/actions/groups/getGroup'
 import { editGroup } from '@/lib/actions/groups/editGroup'
-import GroupFindMembersInput from './GroupFindMembersInput'
 import { createGroup } from '@/lib/actions/groups/createGroup'
-import { Form, FormField, FormItem, FormControl, FormMessage } from '../../ui/form'
+// components
+import { LuLoader2 } from 'react-icons/lu'
+import { Input } from '@/app/components/ui/input'
+import { Button } from '@/app/components/ui/button'
+import { Textarea } from '@/app/components/ui/textarea'
+import GroupTagsInput from '@/app/components/dashboard/groups/GroupTagsInput'
+import GroupFindMembersInput from '@/app/components/dashboard/groups/GroupFindMembersInput'
+import { Form, FormField, FormItem, FormControl, FormMessage } from '@/app/components/ui/form'
 import {  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/app/components/ui/select"
 
 type PropsTypes = {
@@ -47,11 +48,13 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
     const onSubmit = async (values: zod.infer<typeof GroupSchema>) => {
         setIsLoading(true)
         try {
+            // transform data agar sesuai dengan schema prisma
             const transformValues = {
                 ...values,
                 members: values.members.map(obj => obj.member),
                 tags: values.tags.map(obj => obj.tag)
             }
+            // jika bukan edit page maka create group, jika edit page maka edit group
             if(!isEditPage) {
                 await createGroup(userId as string, transformValues)
                 toast.success("New group has created")
@@ -98,27 +101,30 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
     }
 
     useEffect(() => {
+        // panggil method single group jika edit page
         if(isEditPage && groupId) {
             handleGetGroup()
         }
     }, [isEditPage, groupId])
 
     useEffect(() => {
-        if(isEditPage && groupTerm) {
+        // ganti values dari form apabila edit page
+        if(isEditPage && groupTerm && groupId) {
             form.setValue("name", groupTerm.name)
             form.setValue("level", groupTerm.level)
             form.setValue("description", groupTerm.description)
             form.setValue("members", groupTerm.members.filter(obj => obj.member !== sessionUsername))
             form.setValue("tags", groupTerm.tags)
         }
-    }, [isEditPage, groupTerm])
-   
+    }, [isEditPage, groupTerm, groupId])
+
     useEffect(() => {
+        // redirect ke halaman groups jika bukan owner
         if(isEditPage && groupTerm && userId && userId !== groupTerm.groupOwner.id) {
             router.push("/dashboard/groups")
         }
     }, [isEditPage, groupTerm, userId, router])
-
+    
     if(isEditPage && isLoadingPage) {
         return (
             <section className='flex-center flex-col space-y-5'>
@@ -160,7 +166,7 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
                                 <Select disabled={isLoading} value={field.value} onValueChange={field.onChange}>
                                     <FormControl id='level'>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a group level" />
+                                            <SelectValue placeholder="Choose group level" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>

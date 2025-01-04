@@ -1,15 +1,15 @@
 import React from 'react'
-import PageHeader from '@/app/components/dashboard/PageHeader'
-import FriendsTableHeader from '@/app/components/dashboard/friends/FriendsTableHeader'
-import FriendsTable from '@/app/components/dashboard/friends/FriendsTable'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/config/authOptions'
 import { getFriends } from '@/lib/actions/users/getFriends'
+import FriendsTable from '@/app/components/dashboard/friends/FriendsTable'
+// components
+import PageHeader from '@/app/components/dashboard/PageHeader'
+import FriendsTableHeader from '@/app/components/dashboard/friends/FriendsTableHeader'
 
 export const metadata = {
-    title: "Friends"
+    title: "Cubers | Friends"
 }
-
 const Group = async () => {
     const session = await getServerSession(authOptions)
     const userId = session?.user.id
@@ -24,5 +24,4 @@ const Group = async () => {
         </section>
     )
 }
-
 export default Group

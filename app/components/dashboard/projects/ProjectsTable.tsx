@@ -1,22 +1,14 @@
 "use client"
 import React, { useState, useEffect } from 'react'
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/app/components/ui/table"
 import { toast } from 'sonner'
 import queryString from 'query-string'
 import { useSession } from 'next-auth/react'
-import { Button } from '@/app/components/ui/button'
 import { useRouter, useSearchParams } from 'next/navigation'  
-import { debounce } from 'lodash'
-import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
 import { removeProject } from '@/lib/actions/projects/removeProject'
+// components
+import { Button } from '@/app/components/ui/button'
+import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table"
 
 type PropsTypes = {
     data: any
@@ -32,15 +24,15 @@ const ProjectsTable = ({data}: PropsTypes) => {
     const queriesStr = queryString.parse(window.location.search)
 
     const handleRemoveProject = async (projectIdd: number, projectMemberId: number) => {
-            try {
-                await removeProject(projectIdd)
-                const updatedDataInClientSide = dataClientSide.filter((data: any) => data.id !== projectMemberId)
-                setDataClientSide(updatedDataInClientSide)
-                toast.success("Project has removed")
-            } catch (error) {
-                toast.error("Group has failed to removed")
-            }
-        } 
+        try {
+            await removeProject(projectIdd)
+            const updatedDataInClientSide = dataClientSide.filter((data: any) => data.id !== projectMemberId)
+            setDataClientSide(updatedDataInClientSide)
+            toast.success("Project has removed")
+        } catch (error) {
+            toast.error("Group has failed to removed")
+        }
+    } 
 
     return (
         <Table>

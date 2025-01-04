@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs'
-import { prisma } from './prisma'
+import { prisma } from '@/lib/config/prisma'
 import { v4 as uuid } from 'uuid'
-import { createToken } from '../utils'
+import { cookies } from 'next/headers'
+import { createToken } from '@/lib/utils'
 import { NextAuthOptions } from 'next-auth'
 import { LoginSchema } from '@/schemas/auth'
 import GoogleProvider from 'next-auth/providers/google'
 import Credentials from "next-auth/providers/credentials"
-import { receiveEmailVerification, receiveEmailWelcome } from '../actions/emails/emailAction'
-import { cookies } from 'next/headers'
+import { receiveEmailVerification, receiveEmailWelcome } from '@/lib/actions/emails/emailAction'
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
             credentials: {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
-                rememberMe: { label: "Remember Me", type: "text" }, // Optional
+                rememberMe: { label: "Remember Me", type: "text" },
             },
             //@ts-ignore
             async authorize(credentials) {
@@ -64,11 +64,12 @@ export const authOptions: NextAuthOptions = {
                             token
                         }))
                     }
-                    console.log(fields.rememberMe)
                     const cookieStore = await cookies()
                     if(fields.rememberMe) {
+                        // menyimpan cookie jika user ingin menyimpan emailnya (remember me)
                         cookieStore.set("rememberMe", fields.email, {secure: true})
                     } else {
+                        // jika tidak maka hapus
                         cookieStore.delete("rememberMe")
                     }
                     return userData
@@ -97,6 +98,7 @@ export const authOptions: NextAuthOptions = {
                             loginMethod: "GOOGLE"
                         }
                     })
+                    // karena langsung menggunakan google gmail maka tidak perlu verifikasi, jadi langsung mendapatkan email welcome
                     receiveEmailWelcome(user.email as string)
                 }
             }

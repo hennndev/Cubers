@@ -124,9 +124,7 @@ const LoginForm = ({emailRemember}: PropsTypes) => {
                                 </section>
                                 <FormMessage/>
                             </FormItem>
-                    )}/>
-
-                    
+                    )}/>    
                     <div className="flex items-center space-x-2 mb-3">
                         <FormField
                             control={form.control}

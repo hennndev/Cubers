@@ -12,12 +12,10 @@ const ResendTimer = ({setIsClickResend, countdownReclickResend}: PropsTypes) => 
             return <span>{hours}:{minutes}:{seconds}</span>
         }
     }
-
     const handleComplete = () => {
         setIsClickResend(false)
         localStorage.setItem("isClickResend", JSON.stringify(false))
     }
-
     return <Countdown date={countdownReclickResend} renderer={renderer} onComplete={handleComplete}/>
 }
 

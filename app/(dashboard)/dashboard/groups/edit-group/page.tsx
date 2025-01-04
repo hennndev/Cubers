@@ -4,10 +4,11 @@ import PageHeader from '@/app/components/dashboard/PageHeader'
 import GroupForm from '@/app/components/dashboard/groups/GroupForm'
 
 export const metadata = {
-    title: "Edit group"
+    title: "Cubers | Edit group"
 }
 
 const EditGroup = async ({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) => {
+    // mengambil query id
     const id = (await searchParams).id
     if(!id) {
         redirect("/dashboard/groups")

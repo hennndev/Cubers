@@ -3,7 +3,7 @@ import PageHeader from '@/app/components/dashboard/PageHeader'
 import GroupForm from '@/app/components/dashboard/groups/GroupForm'
 
 export const metadata = {
-    title: "Create group"
+    title: "Cubers | Create group"
 }
 
 const CreateGroup = () => {

@@ -1,12 +1,13 @@
 "use client"
 import React, { useState, useRef } from 'react'
-import { debounce } from 'lodash'
 import { toast } from 'sonner'
+import { debounce } from 'lodash'
 import { useSession } from 'next-auth/react'
-import { Input } from '@/app/components/ui/input'
-import { Button } from '@/app/components/ui/button'
 import { findUsers } from '@/lib/actions/users/findUsers'
 import { addFriend } from '@/lib/actions/users/addFriend'
+// components
+import { Input } from '@/app/components/ui/input'
+import { Button } from '@/app/components/ui/button'
 import { LuArrowUpAZ, LuListFilter } from 'react-icons/lu'
 import SelectedSearchUser from '@/app/components/utils/SelectedSearchUser'
 

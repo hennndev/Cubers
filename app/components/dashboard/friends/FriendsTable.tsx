@@ -1,19 +1,12 @@
 "use client"
 import React from 'react'
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/app/components/ui/table"
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
-import { Button } from '@/app/components/ui/button'
 import { removeFriend } from '@/lib/actions/users/removeFriend'
+// components
+import { Button } from '@/app/components/ui/button'
 import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table"
 
 type PropsTypes = {
     data: FriendDataTypes[]
@@ -77,5 +70,4 @@ const FriendsTable = ({data}: PropsTypes) => {
       </Table>
     )
 }
-
 export default FriendsTable

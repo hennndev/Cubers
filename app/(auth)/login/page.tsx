@@ -7,7 +7,7 @@ import LoginForm from '@/app/components/auth/LoginForm'
 import AlreadyLoggedIn from '@/app/components/auth/AlreadyLoggedIn'
 
 export const metadata = {
-    title: "Login"
+    title: "Cubers | Login"
 }
 
 const Login = async () => {

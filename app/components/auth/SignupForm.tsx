@@ -1,18 +1,18 @@
 "use client"
 import React, { useState } from 'react'
 import * as zod from "zod"
-import { toast } from 'sonner'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
-import { RiGoogleFill } from 'react-icons/ri'
 import { SignupSchema } from '@/schemas/auth'
+import { signup } from '@/lib/actions/auth/signup'
+import { zodResolver } from '@hookform/resolvers/zod'
+// components
+import { RiGoogleFill } from 'react-icons/ri'
 import { FiLock, FiUnlock } from "react-icons/fi"
 import { Input } from '@/app/components/ui/input'
 import { Button } from '@/app/components/ui/button'
-import { signup } from '@/lib/actions/auth/signup'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { LuAlertTriangle, LuX, LuLoader2, LuCheck } from 'react-icons/lu'
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/app/components/ui/form"
 
@@ -37,17 +37,20 @@ const SignupForm = () => {
         setIsSuccess(false)
         setIsError(null)
         try {
+            // request signup action
             const res = await signup(values)
             // Jika error, maka throw atau tampilkan errornya
             if(res && res.error) {
                 throw res.error
             }
-            // Jika success, set value jadi true, dan akan menampilkan alert success message
+            // Jika success, set success jadi true, dan akan menampilkan alert success message
             setIsSuccess(true)
+            // kemudian muncul toast untuk menyegerakan verifikasi email
             toast("New user has created", {
                 description: "Please verified your email now",
             })
         } catch (error: any) {
+            // set error message
             setIsError(error as string)
         } finally {
             setIsLoading(false)
@@ -63,11 +66,13 @@ const SignupForm = () => {
     return (
         <section className='w-[550px] pt-10 pb-10'>
             <h1 className='text-3xl font-bold tracking-tight text-back'>Signup</h1>
+            {/* handle error message */}
             {isError && <section className='flexx relative mt-4 -mb-2 text-white font-normal bg-destructive rounded-lg p-3'>
                 <LuAlertTriangle className='text-xl mr-2'/>
                 {isError}
                 <LuX className='absolute top-2 right-2 text-lg cursor-pointer' onClick={() => setIsError(null)}/>
             </section>}
+            {/* handle success message */}
             {isSuccess && <section className='flex relative mt-4 -mb-2 text-white font-normal bg-green-600 rounded-lg p-3'>
                 <LuCheck className='text-2xl mr-2'/>
                 <p className='mr-5'>Success create new account. Check your email and verified your email now.</p>
@@ -81,28 +86,35 @@ const SignupForm = () => {
                             name="name"
                             render={({field}) => (
                                 <FormItem className='flex flex-col space-y-1.5 mb-3 flex-1'>
-                                    <label htmlFor="name" className='text-base'>Name <span className='text-destructive'>*</span></label>
+                                    <label htmlFor="name" className='text-base'>
+                                        Name <span className='text-destructive'>*</span>
+                                    </label>
                                     <Input type='text' id='name' placeholder='Input your name'{...field}/>
                                     <FormMessage/>
                                 </FormItem>
-                            )}/>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="username"
                             render={({field}) => (
                                 <FormItem className='flex flex-col space-y-1.5 mb-3 flex-1'>
-                                    <label htmlFor="username" className='text-base'>Username <span className='text-destructive'>*</span></label>
+                                    <label htmlFor="username" className='text-base'>
+                                        Username <span className='text-destructive'>*</span>
+                                    </label>
                                     <FormControl>
                                         <Input 
                                             type='text' 
                                             id='username' 
                                             placeholder='Input your name' 
                                             {...field}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value.trim())}/>
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value.trim())}
+                                        />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
-                            )}/>
+                            )}
+                        />
                     </section>
                     <FormField
                         control={form.control}
@@ -115,7 +127,8 @@ const SignupForm = () => {
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="password"
@@ -132,7 +145,8 @@ const SignupForm = () => {
                                 </section>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="passwordConfirm"
@@ -149,7 +163,8 @@ const SignupForm = () => {
                                 </section>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
                     <Button type='submit' disabled={isLoading ? true: false}>
                         {isLoading && <LuLoader2 className="animate-spin" />}
                         {isLoading ? 'Waiting' : 'Submit'}
@@ -157,7 +172,7 @@ const SignupForm = () => {
                 </form>
             </Form>
             <div className='mt-3'>
-                <p className='text-sm'>
+                <p className='text-sm text-center'>
                     Already have an account? <Link href='/login' className='text-sm underline'>Login</Link>
                 </p>
             </div>

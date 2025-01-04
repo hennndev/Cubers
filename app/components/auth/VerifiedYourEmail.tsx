@@ -1,16 +1,15 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import Countdown from "react-countdown"
-import { IoMdMail } from "react-icons/io"
-import { LuLoader2 } from 'react-icons/lu'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/app/components/ui/button'
-import useDecodedToken from '../../hooks/useDecodedToken'
+import useDecodedToken from '@/app/hooks/useDecodedToken'
 import { receiveEmailVerification } from '@/lib/actions/emails/emailAction'
 import { checkEmailIsVerified } from '@/lib/actions/auth/checkEmailIsVerified'
-import { count } from 'node:console'
-import ResendTimer from './ResendTimer'
+// components
+import { IoMdMail } from "react-icons/io"
+import { LuLoader2 } from 'react-icons/lu'
+import { Button } from '@/app/components/ui/button'
+import ResendTimer from '@/app/components/auth/ResendTimer'
 
 type PropsTypes = {
     token: string
@@ -19,13 +18,14 @@ type PropsTypes = {
 const VerifiedYourEmail = ({token}: PropsTypes) => {
     const router = useRouter()
     const { dataDecoded } = useDecodedToken(token)
-    const [isClickResend, setIsClickResend] = useState<boolean>(JSON.parse(localStorage.getItem("isClickResend") as string) || false)
-    const [countdownReclickResend, setCountdownReclickResend] = useState<number>(+JSON.parse(localStorage.getItem("countdown") as string) || 0)
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [resendLoading, setResendLoading] = useState<boolean>(false)
+    const [isClickResend, setIsClickResend] = useState<boolean>(JSON.parse(localStorage.getItem("isClickResend") as string) || false)
+    const [countdownReclickResend, setCountdownReclickResend] = useState<number>(+JSON.parse(localStorage.getItem("countdown") as string) || 0)
 
     const handleResend = async () => {
         setResendLoading(true)
+        // Setelah klik resend akan mendapatkan email verification
         await receiveEmailVerification(dataDecoded?.email as string)
         toast("New email verification has sended. Please check your email", {
             description: "Please check your email",
@@ -34,6 +34,7 @@ const VerifiedYourEmail = ({token}: PropsTypes) => {
         setResendLoading(false)
         setIsClickResend(true)
         localStorage.setItem("isClickResend", JSON.stringify(true))
+        // Kemudian akan membuat countdown 1 menit setelah melakukan klik resend
         setCountdownReclickResend(Date.now() + 60000)
         localStorage.setItem("countdown", JSON.stringify(Date.now() + 60000))
     }

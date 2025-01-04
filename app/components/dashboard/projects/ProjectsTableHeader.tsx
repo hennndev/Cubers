@@ -2,10 +2,11 @@
 import React, { useState } from 'react'
 import queryString from 'query-string'
 import { useSearchParams } from 'next/navigation'
+import { useQueryParams } from '@/app/hooks/useQueryParams'
+// components
 import { Input } from '@/app/components/ui/input'
 import { Button } from '@/app/components/ui/button'
 import { LuArrowUpAZ, LuListFilter } from 'react-icons/lu'
-import { useQueryParams } from '@/app/hooks/useQueryParams'
 
 const ProjectsTableHeader = () => {
     const searchParams = useSearchParams()
@@ -54,5 +55,4 @@ const ProjectsTableHeader = () => {
         </section>
     )
 }
-
 export default ProjectsTableHeader
