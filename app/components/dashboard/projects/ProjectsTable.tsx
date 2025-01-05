@@ -49,13 +49,13 @@ const ProjectsTable = ({data}: PropsTypes) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((obj: any) => (
+                {data.map((obj: any, index: number) => (
                     <TableRow key={obj.id}>
-                        <TableCell className="font-medium">{obj.project.id + 1}</TableCell>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
                         <TableCell>{obj.project.name}</TableCell>
                         <TableCell>Owner</TableCell>
                         <TableCell>
-                            {obj.project.members.length}
+                            {obj.project.members.length} {obj.project.members.length > 1 ? "members" : "member"}
                         </TableCell>
                         <TableCell>
                             <Button variant="secondary" size="sm">Open Project</Button>
@@ -64,7 +64,7 @@ const ProjectsTable = ({data}: PropsTypes) => {
                             {new Date(obj.project.createdAt).toLocaleDateString()}
                         </TableCell>
                         <TableCell className='text-right space-x-3'>
-                            <Button variant="secondary" size="sm">
+                            <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/projects/edit-project?id=${obj.project.id}`)}>
                                 Edit
                             </Button>
                             <ModalConfirmButton 

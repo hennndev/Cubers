@@ -1,14 +1,14 @@
 "use server"
 import { prisma } from "@/lib/config/prisma"
 
-export const getGroup = async (groupId: number) => {
+export const getProject = async (projectId: number) => {
     try {
-        if(!groupId) {
+        if(!projectId) {
             throw new Error("Something went wrong")
         }
-        const group = await prisma.group.findUnique({
+        const project = await prisma.project.findUnique({
             where: {
-                id: groupId
+                id: projectId
             },
             select: {
                 id: true,
@@ -17,7 +17,7 @@ export const getGroup = async (groupId: number) => {
                 tags: true,
                 description: true,
                 members: true,
-                groupOwner: {
+                projectOwner: {
                     select: {
                         id: true
                     }
@@ -25,7 +25,7 @@ export const getGroup = async (groupId: number) => {
             }
         })
         return {
-            data: group
+            data: project
         }
     } catch (error: any) {
         throw new Error(error.message)

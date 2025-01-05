@@ -1,9 +1,9 @@
 "use server"
 import * as zod from "zod"
-import { prisma } from "@/lib/config/prisma"
-import { revalidatePath } from "next/cache"
-import { GroupSchema } from "@/schemas/group"
 import { RoleGroup } from "@prisma/client"
+import { revalidatePath } from "next/cache"
+import { prisma } from "@/lib/config/prisma"
+import { GroupSchema } from "@/schemas/group"
 
 type CreateGroupRequest = Omit<zod.infer<typeof GroupSchema>, "members" | "tags"> & {
     tags: string[]

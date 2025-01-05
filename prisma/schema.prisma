@@ -47,9 +47,9 @@ model Session {
 // ==========USER==========
 model User {
   id              String          @id
-  name            String                  //require when signup
-  username        String          @unique //require when signup
-  email           String          @unique //require when signup
+  name            String                 
+  username        String          @unique
+  email           String          @unique
   password        String?
   profileImage    String?         
   emailVerified   Boolean         @default(false)
