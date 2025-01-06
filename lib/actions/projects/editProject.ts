@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/config/prisma"
 import * as zod from "zod"
 import { GroupSchema } from "@/schemas/group"
-import { RoleGroup } from "@prisma/client"
+import { RoleGroup, RoleProjectControl } from "@prisma/client"
 import { revalidatePath } from "next/cache"
 import { ProjectSchema } from "@/schemas/project"
 
@@ -58,7 +58,7 @@ export const editProject = async (ownerId: string, projectId: number, data: Edit
             if(membersToAdd.length > 0) {
                 const projectMemberData = membersToAdd.map((member) => ({
                     username: member,
-                    roleGroup: RoleGroup.Member,
+                    roleProjectControl: RoleProjectControl.Member,
                     projectId
                 }))
                 await tx.projectMember.createMany({

@@ -17,8 +17,8 @@ export const getProjects = async (userId: string, keyword: string) => {
                         roleProjectControl: true,
                         project: {
                             include: {
-                                members: true,
-                            },
+                                members: true
+                            }
                         }
                     },
                     where: {

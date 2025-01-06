@@ -1,7 +1,7 @@
 import React from 'react'
 
 export const metadata = {
-    title: "Dashboard"
+    title: "Cubers | Dashboard"
 }
 
 const Dashboard = () => {

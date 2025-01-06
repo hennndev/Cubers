@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { ProjectSchema } from '@/schemas/project'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useProjectStore } from '@/store/projectStore'
 import { getProject } from '@/lib/actions/projects/getProject'
 import { createProject } from '@/lib/actions/projects/createProject'
 // components
@@ -17,14 +16,21 @@ import ProjectTagsInput from './ProjectTagsInput'
 import { Button } from '@/app/components/ui/button'
 import { Textarea } from '@/app/components/ui/textarea'
 import ProjectFindMembersInput from './ProjectFindMembersInput'
+import { editProject } from '@/lib/actions/projects/editProject'
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/app/components/ui/form'
 import {  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/app/components/ui/select"
-import { editProject } from '@/lib/actions/projects/editProject'
 
 type PropsTypes = {
     isEditPage?: boolean
     projectId?: number
 }
+
+type ProjectTermTypes = zod.infer<typeof ProjectSchema> & { 
+    id: number,
+    projectOwner: {
+        id: string
+    }
+ } | null
 
 const ProjectForm = ({isEditPage, projectId}: PropsTypes) => {
     const router = useRouter()
@@ -43,7 +49,7 @@ const ProjectForm = ({isEditPage, projectId}: PropsTypes) => {
             tags: []
         }
     })
-     const { projectTerm, setProjectTerm } = useProjectStore()
+    const [projectTerm, setProjectTerm] = useState<ProjectTermTypes>(null)
     
     const onSubmit = async (values: zod.infer<typeof ProjectSchema>) => {
         setIsLoading(true)
@@ -58,44 +64,38 @@ const ProjectForm = ({isEditPage, projectId}: PropsTypes) => {
                 toast.success("New project has created")
                 router.push("/dashboard/projects")
             } else {
-                await editProject(userId as string, projectTerm?.id as number, transformValues)
+                const data = await editProject(userId as string, projectTerm?.id as number, transformValues)
                 toast.success("Group has updated")
                 router.push("/dashboard/projects")
             }
-        } catch (error) {
-            toast.error("Failed create new project")
+        } catch (error: any) {
+            toast.error(error.message || "Something went wrong")
         } finally {
             setIsLoading(false)
         }
     }
 
     const handleGetProject = async () => {       
-        const isProjectStored = projectTerm?.id === projectId 
-        if(!projectTerm || !isProjectStored) {
-            setIsLoadingPage(true)
-            const project = await getProject(projectId as number)
-            if(project.data) {
-                const transformProjectMember = project.data?.members.map(obj => ({
-                    member: obj.username
-                }))
-                const transformTags = project.data.tags.map(tag => ({
-                    tag
-                }))
-                setProjectTerm({
-                    id: project.data.id,
-                    name: project.data.name,
-                    level: project.data.level,
-                    description: project.data.description,
-                    tags: transformTags,
-                    members: transformProjectMember,
-                    projectOwner: project.data.projectOwner
-                })
-                setIsLoadingPage(false)
-            } 
-            if(!project.data) {
-                router.push("/dashboard/groups")
-            }
-        }  
+        setIsLoadingPage(true)
+        const project = await getProject(projectId as number)
+        if(project.data) {
+            const transformProjectMember = project.data?.members.map(obj => ({
+                member: obj.username
+            }))
+            const transformTags = project.data.tags.map(tag => ({
+                tag
+            }))
+            setProjectTerm({
+                id: project.data.id,
+                name: project.data.name,
+                level: project.data.level,
+                description: project.data.description,
+                tags: transformTags,
+                members: transformProjectMember,
+                projectOwner: project.data.projectOwner
+            })
+            setIsLoadingPage(false)
+        } 
     }
 
     useEffect(() => {
@@ -106,19 +106,15 @@ const ProjectForm = ({isEditPage, projectId}: PropsTypes) => {
 
     useEffect(() => {
         if(isEditPage && projectTerm) {
-            form.setValue("name", projectTerm.name)
-            form.setValue("level", projectTerm.level)
-            form.setValue("description", projectTerm.description)
-            form.setValue("members", projectTerm.members.filter(obj => obj.member !== sessionUsername))
-            form.setValue("tags", projectTerm.tags)
+            form.reset({
+                name: projectTerm.name,
+                level: projectTerm.level,
+                description: projectTerm.description,
+                members: projectTerm.members.filter(obj => obj.member !== sessionUsername),
+                tags: projectTerm.tags,
+            })
         }
     }, [isEditPage, projectTerm])
-   
-    useEffect(() => {
-        if(isEditPage && projectTerm && userId && userId !== projectTerm.projectOwner.id) {
-            router.push("/dashboard/projects")
-        }
-    }, [isEditPage, projectTerm, userId, router])
 
     if(isEditPage && isLoadingPage) {
         return (

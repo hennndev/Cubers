@@ -2,8 +2,9 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import * as zod from "zod"
 import { GroupSchema } from '@/schemas/group'
+import { ProjectSchema } from '@/schemas/project'
 
-type ProjectTermTypes = zod.infer<typeof GroupSchema> & { 
+type ProjectTermTypes = zod.infer<typeof ProjectSchema> & { 
     id: number,
     projectOwner: {
         id: string

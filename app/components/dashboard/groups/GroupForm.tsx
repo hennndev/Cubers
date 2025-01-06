@@ -5,7 +5,6 @@ import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
 import { GroupSchema } from '@/schemas/group'
-import { useGroupStore } from '@/store/groupStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, usePathname } from 'next/navigation'
 import { getGroup } from '@/lib/actions/groups/getGroup'
@@ -26,6 +25,13 @@ type PropsTypes = {
     groupId?: number
 }
 
+type GroupTermTypes = zod.infer<typeof GroupSchema> & { 
+    id: number,
+    groupOwner: {
+        id: string
+    }
+ } | null
+
 const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
     const router = useRouter()
     const session = useSession()
@@ -43,7 +49,7 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
             tags: []
         }
     })
-    const { groupTerm, setGroupTerm } = useGroupStore()
+    const [groupTerm, setGroupTerm] = useState<GroupTermTypes>(null)
     
     const onSubmit = async (values: zod.infer<typeof GroupSchema>) => {
         setIsLoading(true)
@@ -64,40 +70,34 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
                 toast.success("Group has updated")
                 router.push("/dashboard/groups")
             }
-        } catch (error) {
-            toast.error("Failed create new group")
+        } catch (error: any) {
+            toast.error(error.message || "Something went wrong")
         } finally {
             setIsLoading(false)
         }
     }
 
     const handleGetGroup = async () => {       
-        const isGroupStored = groupTerm?.id === groupId 
-        if(!groupTerm || !isGroupStored) {
-            setIsLoadingPage(true)
-            const group = await getGroup(groupId as number)
-            if(group.data) {
-                const transformGroupMember = group.data?.members.map(obj => ({
-                    member: obj.username
-                }))
-                const transformTags = group.data.tags.map(tag => ({
-                    tag
-                }))
-                setGroupTerm({
-                    id: group.data.id,
-                    name: group.data.name,
-                    level: group.data.level,
-                    description: group.data.description,
-                    tags: transformTags,
-                    members: transformGroupMember,
-                    groupOwner: group.data.groupOwner
-                })
-                setIsLoadingPage(false)
-            } 
-            if(!group.data) {
-                router.push("/dashboard/groups")
-            }
-        }  
+        setIsLoadingPage(true)
+        const group = await getGroup(groupId as number)
+        if(group.data) {
+            const transformGroupMember = group.data?.members.map(obj => ({
+                member: obj.username
+            }))
+            const transformTags = group.data.tags.map(tag => ({
+                tag
+            }))
+            setGroupTerm({
+                id: group.data.id,
+                name: group.data.name,
+                level: group.data.level,
+                description: group.data.description,
+                tags: transformTags,
+                members: transformGroupMember,
+                groupOwner: group.data.groupOwner
+            })
+            setIsLoadingPage(false)
+        } 
     }
 
     useEffect(() => {
@@ -109,21 +109,15 @@ const GroupForm = ({isEditPage, groupId}: PropsTypes) => {
 
     useEffect(() => {
         // ganti values dari form apabila edit page
-        if(isEditPage && groupTerm && groupId) {
+        if(isEditPage && groupTerm) {
             form.setValue("name", groupTerm.name)
             form.setValue("level", groupTerm.level)
             form.setValue("description", groupTerm.description)
             form.setValue("members", groupTerm.members.filter(obj => obj.member !== sessionUsername))
             form.setValue("tags", groupTerm.tags)
         }
-    }, [isEditPage, groupTerm, groupId])
+    }, [isEditPage, groupTerm])
 
-    useEffect(() => {
-        // redirect ke halaman groups jika bukan owner
-        if(isEditPage && groupTerm && userId && userId !== groupTerm.groupOwner.id) {
-            router.push("/dashboard/groups")
-        }
-    }, [isEditPage, groupTerm, userId, router])
     
     if(isEditPage && isLoadingPage) {
         return (
