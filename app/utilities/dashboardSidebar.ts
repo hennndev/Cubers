@@ -1,9 +1,9 @@
-import { LuHome, LuUsers, LuBriefcase, LuContact2, LuCalendar, LuCalendarDays, LuFolders } from "react-icons/lu"
+import { LuComponent, LuUsers, LuBriefcase, LuContact, LuMail, LuCalendarDays, LuFolders, LuSettings, LuNotebookText  } from "react-icons/lu"
 
 export const dataSidebar = [
     {
-        name: 'Home',
-        Icon: LuHome,
+        name: 'Dashboard',
+        Icon: LuComponent,
         url: '/dashboard'
     },
     {
@@ -18,7 +18,7 @@ export const dataSidebar = [
     },
     {
         name: 'Friends',
-        Icon: LuContact2,
+        Icon: LuContact,
         url: '/dashboard/friends'
     },
     {
@@ -30,6 +30,21 @@ export const dataSidebar = [
         name: 'Storage',
         Icon: LuFolders,
         url: '/dashboard/storage'
+    },
+    {
+        name: 'Todos',
+        Icon: LuNotebookText,
+        url: '/dashboard/todos'
+    },
+    {
+        name: 'Mail',
+        Icon: LuMail ,
+        url: '/dashboard/mail'
+    },
+    {
+        name: 'Settings',
+        Icon: LuSettings ,
+        url: '/dashboard/settings'
     },
 ]
 

@@ -121,7 +121,7 @@ const GroupTable = ({data}: PropsTypes) => {
                             {obj.group.members.length} Member
                         </TableCell>
                         <TableCell>
-                            <Button variant="secondary" size="sm" onClick={() => router.push(`/groups/${obj.group.name.replaceAll(" ", "-")}?id=${obj.group.id}`)}>
+                            <Button variant="secondary" size="sm" onClick={() => router.push(`/group/${obj.group.name.replaceAll(" ", "-")}/dashboard`)}>
                                 Open Group
                             </Button>
                         </TableCell>

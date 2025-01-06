@@ -14,14 +14,20 @@ import {
     SidebarFooter
 } from "@/app/components/ui/sidebar"
 import { signOut, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { dataSidebar } from '@/app/utilities/dashboardSidebar'
+import { useRouter, usePathname } from 'next/navigation'
+import { dataSidebar } from '@/app/utilities/groupSidebar'
 import { LuChevronsUpDown, LuChevronUp, LuUser, LuCodesandbox } from 'react-icons/lu'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/app/components/ui/dropdown-menu'
 
 const SidebarComponent = () => {
+    const pathname = usePathname()
     const router = useRouter()
     const session = useSession()
+
+    let pathTitle: string[] | string = pathname.split("/")
+    pathTitle.pop()
+    pathTitle = pathTitle.join("/")
+
     return (
         <Sidebar>
             {/* sidebar header */}
@@ -35,7 +41,7 @@ const SidebarComponent = () => {
                                 </div>
                                 <section className='flex flex-col space-y-1'>
                                     <h1 className='text-[15px] font-semibold'>Cubers Inc</h1>
-                                    <p className='text-[13px]'>Dashboard</p>
+                                    <p className='text-[13px]'>Group</p>
                                 </section>
                             </section>
                             <LuChevronsUpDown className="ml-auto" />
@@ -53,7 +59,7 @@ const SidebarComponent = () => {
                             {dataSidebar.map(({Icon, ...obj}) => (
                                 <SidebarMenuItem key={obj.name}>
                                     <SidebarMenuButton asChild>
-                                        <Link href={obj.url}>
+                                        <Link href={`${pathTitle}${obj.url}`}>
                                             <Icon />
                                             <span>{obj.name}</span>
                                         </Link>

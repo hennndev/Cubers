@@ -1,4 +1,6 @@
 import React from 'react'
+import Sidebar from '@/app/components/group/Sidebar'
+import { SidebarProvider } from '@/app/components/ui/sidebar'
 
 type PropsTypes = {
     children: React.ReactNode
@@ -6,9 +8,12 @@ type PropsTypes = {
 
 const GroupLayout = ({children}: PropsTypes) => {
     return (
-        <main>
-            {children}
-        </main>
+        <SidebarProvider>
+            <main className='flex w-full'>
+                <Sidebar/>
+                {children}
+            </main>
+        </SidebarProvider>
     )
 }
 
