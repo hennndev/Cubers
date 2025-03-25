@@ -1,0 +1,54 @@
+- LOGIN PAGE ALREADY DONE 🟩
+  - validation input
+  - loader button
+  - error alert message (email not found, password incorrect)
+  - redirect after logged in
+  - login credential
+  - login/signup gmail
+  - remember me
+  - show remember me if cookie remember me is existed
+  - show password
+  - show already logged in if user move into login page from dashboard without logout
+  - move into register page if user didn't have an account
+  - if want to logged in but still not verified the email, page will redirect to verified your email page
+
+- REGISTER PAGE NOT YET 🟨
+  - validation input
+  - loader button
+  - error alert message (email/username already used)
+  - success alert message & toast (user has created)
+  - signup credential
+  - login/signup gmail
+  - show password
+  - show password confirmation
+  - move into login page if user already have an account
+  - redirect back into dashboard if user move into signup page without logout
+  - after signup automatically sending verification email in email user
+  - Still not setup default profile image, still research using static URL image or accessing by database ❌
+
+- EMAIL VERIFICATION PAGE ALREADY DONE 🟩
+  - if query token not existed, page will redirect into not found page
+  - when email verification page is mounting, automatically invoke verifiedEmail action by query token
+  - showing token expired message if token from query token is expired. Then if expired, verifiedEmail action is not running
+  - showing token invalid message if token is invalid
+  - showing loading text when page is mounting
+  - button into login if already verified, and button into verified your email if token has expired
+  - showing verification message text
+  - after verification email, user automatically receive email welcome
+
+
+- VERIFIED YOUR EMAIL PAGE ALREADY DONE 🟩
+ - if query token not existed, page will redirect into not found page
+ - when page is mounting, automatically invoke checkEmail 
+ - Email is getting from decode token from query token in URL
+ - if email is already verified, automatically redirect into not found page
+ - if email is not verified, page will given button "resend verification email" to get new verification in your email
+ - after click button resend, will showing countdown 1 min for giving the logic is gap for user to resend again
+ - save the timer in localStorage for make the timer is realtime, not resetted
+ - if token invalid/expired will redirect into not found page
+ - showing loading text when page is mounting
+
+
+- FORGOT PASSWORD PAGE NOT YET CREATED 🟥
+- RESET PASSWORD PAGE NOT YET CREATED 🟥
+

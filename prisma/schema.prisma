@@ -51,11 +51,23 @@ model User {
   username        String          @unique
   email           String          @unique
   password        String?
-  profileImage    String?         
+  profileImage    String?                 
   emailVerified   Boolean         @default(false)
   loginMethod     LoginMethod     @default(CREDENTIALS)
-  userDetailId    Int?            @unique
-  detail          UserDetail?     @relation(fields: [userDetailId], references: [id])
+  bio             String
+  country         String
+  city            String
+  whatsappNumber  String
+  address         String
+  status          UserStatus
+
+  //jika statusnya student atau student and worker
+  detailStudentId   Int?              @unique
+  detailStudent     DetailStudent?    @relation(fields: [detailStudentId], references: [id])
+
+  //jika statusnya worker atau student and worker
+  detailWorkerId    Int?              @unique
+  detailWorker      DetailWorker?     @relation(fields: [detailWorkerId], references: [id])
   
   groups          Group[]
   groupsMember    GroupMember[]
@@ -73,50 +85,34 @@ model User {
   createdAt       DateTime        @default(now())
 
   @@map("users")
-  @@index([userDetailId])
+  @@index([detailStudentId])
+  @@index([detailWorkerId])
 }
 enum LoginMethod {
   CREDENTIALS
   GOOGLE
 }
-model UserDetail {
-  id                Int               @id @default(autoincrement())
-  status            UserStatus        @default(STUDENT)
-  country           String
-  city              String
-  fullAddress       String
-  postalCode        Int
-  user              User?
-
-  detailStudentId   Int?              @unique
-  detailStudent     DetailStudent?    @relation(fields: [detailStudentId], references: [id])
-
-  detailWorkerId    Int?              @unique
-  detailWorker      DetailWorker?     @relation(fields: [detailWorkerId], references: [id])
-  createdAt         DateTime          @default(now())
-
-  @@map("user_detail")
-  @@index([detailStudentId])
-  @@index([detailWorkerId])
-}
 enum UserStatus {
   STUDENT
   WORKER
+  STUDENT_AND_WORKER
 }
 model DetailStudent {
-  id            Int     @id
-  university    String
-  prodi         String
-  semester      Int
-  userDetail    UserDetail?
+  id            Int     @id @default(autoincrement())
+  institution   String
+  major         String
+  gradeLevel    String
+  User User[]
 
   @@map("detail_student")
 }
 model DetailWorker {
-  id          Int       @id
-  job         String
+  id          Int       @id @default(autoincrement())
+  position    String
   company     String
-  userDetail  UserDetail?
+  department  String
+  experience  String
+  User User[]
 
   @@map("detail_worker")
 }
