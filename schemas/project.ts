@@ -9,6 +9,9 @@ export const ProjectSchema = zod.object({
     }).array(),
     members: zod.object({
         member: zod.string().min(1)
-    }).array()
+    }).array(),
+    startDate: zod.date({required_error: "Start date is required"}),
+    endDate: zod.date({required_error: "End date is required"}),
+    estimatedBudget: zod.string({required_error: "Estimated budget is required"})
 
 })
