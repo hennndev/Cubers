@@ -1,8 +1,9 @@
 import * as zod from "zod"
+import { ProjectPriority } from "@prisma/client"
 
 export const ProjectSchema = zod.object({
     name: zod.string().min(1, {message: "Project name is required"}),
-    level: zod.enum(["Common", "Middle", "Priority"], {message: "Group level only require Common/Middle/Priority"}),
+    priority: zod.nativeEnum(ProjectPriority, {message: "Priority only require Low/Medium/High"}),
     description: zod.string().min(1, {message: "Project description is required"}),
     tags: zod.object({
         tag: zod.string().min(1)
@@ -12,6 +13,5 @@ export const ProjectSchema = zod.object({
     }).array(),
     startDate: zod.date({required_error: "Start date is required"}),
     endDate: zod.date({required_error: "End date is required"}),
-    estimatedBudget: zod.string({required_error: "Estimated budget is required"})
-
+    estimatedBudget: zod.string().min(1, { message: "Estimated budget is required" })
 })

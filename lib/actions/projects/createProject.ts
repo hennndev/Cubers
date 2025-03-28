@@ -2,14 +2,14 @@
 import * as zod from "zod"
 import { prisma } from "@/lib/config/prisma"
 import { ProjectSchema } from "@/schemas/project"
-import { RoleProjectControl } from "@prisma/client"
+import { RoleControl } from "@prisma/client"
 
-type CreateProjectRequest = Omit<zod.infer<typeof ProjectSchema>, "members" | "tags"> & {
+type CreateProjectRequestTypes = Omit<zod.infer<typeof ProjectSchema>, "members" | "tags"> & {
     members: string[],
     tags: string[]
 }
 
-export const createProject = async (userId: string,  data: CreateProjectRequest) => {
+export const createProject = async (userId: string,  data: CreateProjectRequestTypes) => {
     try {
         if(!userId) {
             throw new Error("Something went wrong")
@@ -24,10 +24,13 @@ export const createProject = async (userId: string,  data: CreateProjectRequest)
         const project = await prisma.project.create({
             data: {
                 name: data.name,
-                level: data.level,
+                priority: data.priority,
                 description: data.description,
                 tags: data.tags,
-                projectOwnerId: userId,
+                estimatedBudget: data.estimatedBudget,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                projectOwnerId: userId
             }
         })
 
@@ -35,12 +38,12 @@ export const createProject = async (userId: string,  data: CreateProjectRequest)
             ...data.members.map((member) => ({
                 username: member,
                 projectId: project.id,
-                roleProjectControl: RoleProjectControl.Member
+                roleControl: RoleControl.Member
             })),
             {
                 username: checkUserOwner?.username as string,
                 projectId: project.id,
-                roleProjectControl: RoleProjectControl.Owner
+                roleControl: RoleControl.Owner
             }
         ] 
         await prisma.projectMember.createMany({

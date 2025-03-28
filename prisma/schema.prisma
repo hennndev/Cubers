@@ -115,7 +115,7 @@ model DetailWorker {
 
   @@map("detail_worker")
 }
-
+// END OF USER SCHEME
 
 
 
@@ -158,105 +158,119 @@ enum RoleGroup {
   Admin
   Member
 }
-
+// END OF GROUP SCHEME
 
 
 
 // ==========PROJECT==========
 model Project {
   id              Int             @id @default(autoincrement())
-  name            String
-  priority        ProjectPriority
-  description     String
-  startDate       DateTime
-  endDate         DateTime
-  estimatedBudget String
-  status          ProjectStatus
-  tags            String[]
+  name            String          //first in form
+  description     String          //first in form
+  estimatedBudget String          //first in form
+  tags            String[]        //first in form
+  startDate       DateTime        //first in form
+  endDate         DateTime        //first in form
+  createdAt       DateTime        @default(now())   //first in form
+  status          ProjectStatus   @default(Pending) //first in form
+  priority        ProjectPriority //first in form
 
-  roles           ProjectRole[]  
-  projectOwnerId  String
+  projectOwnerId  String          //first when create new project
   projectOwner    User            @relation(fields: [projectOwnerId], references: [id])
-  tasks           Task[]
-  memberRoles     ProjectRoleMember[]
-  members         ProjectMember[] 
-  createdAt       DateTime        @default(now())
+  roles           ProjectRole[]  
+  tasks           ProjectTask[]
+  members         ProjectMember[]   //first in form (optional)
 
   @@map("projects")
+  @@index([projectOwnerId])
 }
 enum ProjectStatus {
   Pending
-  Ongoing
-  Onhold
+  On_Going
+  On_Hold
   Completed
 }
 enum ProjectPriority {
-  Common
-  Middle
-  Priority
+  LOW
+  MEDIUM
+  HIGH
 }
 //about roles in project
 model ProjectRole {
   id            Int       @id @default(autoincrement())
-  role          String    @unique
-  projects      Project[]
-  rolesProject  ProjectRoleMember[]
+  role          String   
+  projectId     Int 
+  project       Project   @relation(fields: [projectId], references: [id])
   createdAt     DateTime  @default(now())
+  
+  assignedRoles ProjectMember[] 
 
   @@map("project_roles")
+  @@index([projectId])
 }
 //about members of project
 model ProjectMember {
-  id                    Int             @id  @default(autoincrement())
-  username              String          @unique
-  user                  User            @relation(fields: [username], references: [username], onDelete: Cascade)
-  projectId             Int             @unique
-  project               Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt             DateTime        @default(now())
-  roleProjectControl    RoleProjectControl    @default(Member)
-  ProjectRoleMember     ProjectRoleMember[]
+  id               Int             @id  @default(autoincrement())
+  createdAt        DateTime        @default(now())
+  roleControl      RoleControl     @default(Member)
+
+  projectId        Int     
+  project          Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  username         String  
+  user             User    @relation(fields: [username], references: [username], onDelete: Cascade)
+  roles            ProjectRole[]
+  tasks            ProjectTask[]
+  taskComments     TaskComment[]
   
   @@map("project_members")
+  @@index([projectId])
   @@index([username])
+}
+   
+//about task 
+model ProjectTask {
+  id              Int               @id @default(autoincrement())
+  task            String
+  description     String
+  subTasks        String[]
+  tags            String[]
+  status          TaskStatus        @default(Not_Started)
+  dueDate         DateTime
+  createdAt       DateTime          @default(now())
+
+  projectId       Int               
+  project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  comments        TaskComment[]
+  assignees       ProjectMember[] 
+
+  @@map("tasks")
   @@index([projectId])
 }
-enum RoleProjectControl {
+enum TaskStatus {
+  Not_Started
+  In_Research
+  On_Track
+  Revision
+  Done
+}
+model TaskComment {
+  id              Int             @id @default(autoincrement())
+  teks            String[]
+  createdAt       DateTime        @default(now())
+  
+  memberId        Int             
+  member          ProjectMember   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  taskId          Int
+  task            ProjectTask     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("task_comments")
+  @@index([memberId])
+  @@index([taskId])
+}
+// END SCHEME FOR PROJECT
+
+enum RoleControl {
   Owner
   Admin
   Member
-}   
-// about roles of project member
-model ProjectRoleMember {
-  id              Int            @id @default(autoincrement())
-  roleId          Int
-  role            ProjectRole    @relation(fields: [roleId], references: [id])
-  memberId        Int  
-  user            ProjectMember  @relation(fields: [memberId], references: [id])
-  projects        Project[]
-  tasks           Task[]
-  createdAt       DateTime       @default(now())
-
-  @@map("project_roles_member")  
-  @@index([memberId])
-}
-//about task 
-model Task {
-  id              Int               @id @default(autoincrement())
-  task            String
-  status          TaskStatus        @default(Pending)
-  assigneeId      Int               @unique
-  assignee        ProjectRoleMember @relation(fields: [assigneeId], references: [id])
-  review          String
-  createdAt       DateTime          @default(now())
-  Project         Project[]
-
-  @@map("tasks")
-  @@index([assigneeId])
-}
-enum TaskStatus {
-  Pending
-  Ongoing
-  InReview
-  Revision
-  Done
 }

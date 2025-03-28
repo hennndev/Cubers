@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import * as zod from "zod"
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import { format } from "date-fns"
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
@@ -12,21 +13,16 @@ import { getProject } from '@/lib/actions/projects/getProject'
 import { editProject } from '@/lib/actions/projects/editProject'
 import { createProject } from '@/lib/actions/projects/createProject'
 // components
-import { LuLoader, LuCalendar } from 'react-icons/lu'
 import { Input } from '@/app/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/app/components/ui/popover"
-import { Calendar } from "@/app/components/ui/calendar"
 import ProjectTagsInput from './ProjectTagsInput'
 import { Button } from '@/app/components/ui/button'
+import { LuLoader, LuCalendar } from 'react-icons/lu'
+import { Calendar } from "@/app/components/ui/calendar"
 import { Textarea } from '@/app/components/ui/textarea'
 import ProjectFindMembersInput from './ProjectFindMembersInput'
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover"
 import { Form, FormField, FormItem, FormControl, FormMessage, FormDescription } from '@/app/components/ui/form'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/app/components/ui/select"
-import { cn } from '@/lib/utils'
 
 type PropsTypes = {
   isEditPage?: boolean
@@ -47,17 +43,20 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
   const sessionUsername = session.data?.user.username
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isLoadingPage, setIsLoadingPage] = useState<boolean>(false)
+  const [projectTerm, setProjectTerm] = useState<ProjectTermTypes>(null)
   const form = useForm<zod.infer<typeof ProjectSchema>>({
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
       name: "",
-      description: "",
-      level: "Common",
+      tags: [],
       members: [],
-      tags: []
+      priority: "LOW",
+      description: "",
+      estimatedBudget: "",
+      endDate: new Date(),
+      startDate: new Date(),
     }
   })
-  const [projectTerm, setProjectTerm] = useState<ProjectTermTypes>(null)
 
   const onSubmit = async (values: zod.infer<typeof ProjectSchema>) => {
     setIsLoading(true)
@@ -72,8 +71,20 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
         toast.success("New project has created")
         router.push("/dashboard/projects")
       } else {
-        const data = await editProject(userId as string, projectTerm?.id as number, transformValues)
-        toast.success("Group has updated")
+        if(
+            projectTerm && values.name === projectTerm.name && 
+            values.priority === projectTerm.priority && 
+            values.members.every((v, i) => v.member === projectTerm?.members.filter(member => member.member !== sessionUsername)[i].member) && 
+            values.tags.every((v, i) => v.tag === projectTerm.tags[i].tag) && 
+            values.startDate.getTime() === projectTerm.startDate.getTime() && 
+            values.endDate.getTime() === projectTerm.endDate.getTime() && 
+            values.estimatedBudget === projectTerm.estimatedBudget && 
+            values.description === projectTerm.description) {
+          toast.warning("Project data has no changed")
+          return
+        }
+        await editProject(userId as string, projectTerm?.id as number, transformValues)
+        toast.success("Project has updated")
         router.push("/dashboard/projects")
       }
     } catch (error: any) {
@@ -86,22 +97,32 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
   const handleGetProject = async () => {
     setIsLoadingPage(true)
     const project = await getProject(projectId as number)
-    if (project.data) {
+    if(project.data) {
+      project.data.members.forEach(member => {
+        if(member.username === sessionUsername && member.roleControl === "Member") {
+          toast.warning("You didn't have permission to change this data")
+          router.push("/dashboard/projects")
+          return
+        }
+      })
       const transformProjectMember = project.data?.members.map(obj => ({
         member: obj.username
       }))
       const transformTags = project.data.tags.map(tag => ({
         tag
       }))
-      // setProjectTerm({
-      //   id: project.data.id,
-      //   name: project.data.name,
-      //   level: project.data.level,
-      //   description: project.data.description,
-      //   tags: transformTags,
-      //   members: transformProjectMember,
-      //   projectOwner: project.data.projectOwner
-      // })
+      setProjectTerm({
+        id: project.data.id,
+        name: project.data.name,
+        priority: project.data.priority,
+        description: project.data.description,
+        tags: transformTags,
+        members: transformProjectMember,
+        projectOwner: project.data.projectOwner,
+        estimatedBudget: project.data.estimatedBudget,
+        startDate: project.data.startDate,
+        endDate: project.data.endDate
+      })
       setIsLoadingPage(false)
     }
   }
@@ -110,16 +131,19 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
     if (isEditPage && projectId) {
       handleGetProject()
     }
-  }, [isEditPage, projectId])
+  }, [userId, isEditPage, projectId])
 
   useEffect(() => {
     if (isEditPage && projectTerm) {
       form.reset({
         name: projectTerm.name,
-        level: projectTerm.level,
+        priority: projectTerm.priority,
         description: projectTerm.description,
         members: projectTerm.members.filter(obj => obj.member !== sessionUsername),
         tags: projectTerm.tags,
+        estimatedBudget: projectTerm.estimatedBudget,
+        startDate: projectTerm.startDate,
+        endDate: projectTerm.endDate
       })
     }
   }, [isEditPage, projectTerm])
@@ -131,6 +155,9 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
       </section>
     )
   }
+
+
+  console.log(form.formState.errors)
 
   return (
     <section className='px-10'>
@@ -158,24 +185,24 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
           {/* priority */}
           <FormField
             control={form.control}
-            name="level"
+            name="priority"
             render={({ field }) => (
               <FormItem className='flex flex-col space-y-1.5 mb-5'>
-                <label htmlFor='level' className='text-sm'>
+                <label htmlFor='priority' className='text-sm'>
                   Priority <span className='text-red-500'>*</span>
                 </label>
                 <Select disabled={isLoading} value={field.value} onValueChange={field.onChange}>
-                  <FormControl id='level'>
+                  <FormControl id='priority'>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a project level" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Choose project level</SelectLabel>
-                      <SelectItem value="Common">Common</SelectItem>
-                      <SelectItem value="Middle">Middle</SelectItem>
-                      <SelectItem value="Priority">Priority</SelectItem>
+                      <SelectLabel>Choose project priority</SelectLabel>
+                      <SelectItem value="LOW" className='capitalize'>LOW</SelectItem>
+                      <SelectItem value="MEDIUM" className='capitalize'>MEDIUM</SelectItem>
+                      <SelectItem value="HIGH" className='capitalize'>HIGH</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -220,9 +247,7 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(day) => day < new Date(new Date().setHours(0, 0, 0, 0))} // Disable sebelum hari ini
                         initialFocus
                       />
                     </PopoverContent>
@@ -235,7 +260,7 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
             {/* end date */}
             <FormField
               control={form.control}
-              name="startDate"
+              name="endDate"
               render={({ field }) => (
                 <FormItem className='flex flex-1 flex-col space-y-1.5 mb-5'>
                   <label htmlFor='endDate' className='text-sm'>
@@ -265,9 +290,7 @@ const ProjectForm = ({ isEditPage, projectId }: PropsTypes) => {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(day) => day < new Date(new Date().setHours(0, 0, 0, 0))} // Disable sebelum hari ini
                         initialFocus
                       />
                     </PopoverContent>

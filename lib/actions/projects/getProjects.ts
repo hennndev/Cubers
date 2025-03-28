@@ -14,52 +14,68 @@ export const getProjects = async (userId: string, keyword: string) => {
         projectsMember: {
           select: {
             id: true,
-            roleProjectControl: true,
+            roleControl: true,
             project: {
               include: {
                 members: true
-              }
+              },
             }
           },
           where: {
-            project: {
-              OR: [
-                {
-                  name: {
-                    contains: keyword,
-                    mode: 'insensitive'
-                  }
-                },
-                {
-                  projectOwner: {
-                    OR: [
-                      {
-                        username: {
-                          contains: keyword,
-                          mode: 'insensitive'
-                        },
-                      },
-                      {
-                        email: {
-                          contains: keyword,
-                          mode: 'insensitive'
-                        }
-                      }
-                    ]
-                  }
-                },
-                {
-                  tags: {
-                    hasSome: [keyword]
-                  }
+            OR: [
+              {
+                username: {
+                  contains: keyword,
+                  mode: 'insensitive'
                 }
-              ]
-            }
-          }
+              },
+              {
+                project: {
+                  OR: [
+                    {
+                      name: {
+                        contains: keyword,
+                        mode: 'insensitive'
+                      }
+                    },
+                    {
+                      projectOwner: {
+                        OR: [
+                          {
+                            username: {
+                              contains: keyword,
+                              mode: 'insensitive'
+                            },
+                          },
+                          {
+                            email: {
+                              contains: keyword,
+                              mode: 'insensitive'
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      tags: {
+                        hasSome: [keyword]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          orderBy: [
+            {
+              project: {
+                priority: "desc"
+              }
+            },
+          ],
         }
       },
     })
-    console.log(projects)
     return {
       data: projects
     }
