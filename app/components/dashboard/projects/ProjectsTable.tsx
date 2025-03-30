@@ -101,7 +101,7 @@ const ProjectsTable = ({ data }: PropsTypes) => {
               {obj.project.members.length} {obj.project.members.length > 1 ? "members" : "member"}
             </TableCell>
             <TableCell>
-              <Button variant="secondary" size="sm" onClick={() => router.push(`/project/${obj.id}`)}>Open Project</Button>
+              <Button variant="secondary" size="sm" onClick={() => router.push(`/project/${obj.project.id}`)}>Open Project</Button>
             </TableCell>
             <TableCell className={clsx(`font-bold`, 
               obj.project.priority === "HIGH" ? "text-red-500" : "",

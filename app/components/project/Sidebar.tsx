@@ -1,32 +1,23 @@
 "use client"
 import React from 'react'
 import Link from 'next/link'
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarFooter
-} from "@/app/components/ui/sidebar"
 import { signOut, useSession } from 'next-auth/react'
-import { useRouter, usePathname } from 'next/navigation'
-import { dataSidebar } from '@/app/utilities/groupSidebar'
+import { useRouter, usePathname, useParams } from 'next/navigation'
+import { dataSidebar } from '@/app/utilities/projectSidebar'
+// components
 import { LuChevronsUpDown, LuChevronUp, LuUser, LuCodesandbox } from 'react-icons/lu'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/app/components/ui/dropdown-menu'
+import { Sidebar,  SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter } from "@/app/components/ui/sidebar"
 
 const SidebarComponent = () => {
   const pathname = usePathname()
+  const { projectId } = useParams()
   const router = useRouter()
   const session = useSession()
 
   let pathTitle: string[] | string = pathname.split("/")
-  pathTitle.pop()
-  pathTitle = pathTitle.join("/")
+  pathTitle.shift()
+  pathTitle = `/${pathTitle[0]}`
 
   return (
     <Sidebar>
@@ -59,7 +50,7 @@ const SidebarComponent = () => {
               {dataSidebar.map(({ Icon, ...obj }) => (
                 <SidebarMenuItem key={obj.name}>
                   <SidebarMenuButton asChild>
-                    <Link href={`${pathTitle}${obj.url}`}>
+                    <Link href={`${pathTitle}/${projectId}/${obj.url}`}>
                       <Icon />
                       <span>{obj.name}</span>
                     </Link>
@@ -72,34 +63,34 @@ const SidebarComponent = () => {
       </SidebarContent>
 
       {/* sidebar footer */}
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <LuUser /> {session.data?.user?.name}
-                  <LuChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuItem onClick={() => router.push("/dashboard/profile")} className='cursor-pointer'>
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Mail</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+            <SidebarFooter>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuButton>
+                        <LuUser /> {session.data?.user?.username}
+                        <LuChevronUp className="ml-auto" />
+                      </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      side="top"
+                      className="w-[--radix-popper-anchor-width]"
+                    >
+                      <DropdownMenuItem onClick={() => router.push(`/dashboard/profile/${session.data?.user.username}`)} className='cursor-pointer'>
+                        <span>Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <span>Mail</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => signOut()}>
+                        <span>Sign out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarFooter>
     </Sidebar>
 
   )
