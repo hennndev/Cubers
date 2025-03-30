@@ -6,7 +6,7 @@ import { FriendDataTypes } from '@/types/next-env'
 import { removeFriend } from '@/lib/actions/users/removeFriend'
 // components
 import { Button } from '@/app/components/ui/button'
-import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
+import ModalConfirmButton from '@/app/components/shared/ModalConfirm'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table"
 
 type PropsTypes = {

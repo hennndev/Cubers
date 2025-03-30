@@ -1,10 +1,11 @@
 import React from 'react'
 // components
-import PageHeader from '@/app/components/dashboard/PageHeader'
-import ProjectForm from '@/app/components/dashboard/projects/ProjectForm'
+import PageHeader from '@/app/components/shared/PageHeader'
+import ProjectForm from '@/app/components/dashboard/forms/ProjectForm'
 
 export const metadata = {
-  title: "Cubers | Create project"
+  title: "Cubers | Create project",
+  description: "Page for create new project"
 }
 
 const CreateProject = () => {

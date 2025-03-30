@@ -10,7 +10,7 @@ import { addFriend } from '@/lib/actions/users/addFriend'
 import { Input } from '@/app/components/ui/input'
 import { Button } from '@/app/components/ui/button'
 import { LuArrowUpAZ, LuListFilter } from 'react-icons/lu'
-import SelectedSearchUser from '@/app/components/utils/SelectedSearchUser'
+import SelectedSearchUser from '@/app/components/shared/SelectedSearchUser'
 
 type UserResponseTypes = {
   id: string

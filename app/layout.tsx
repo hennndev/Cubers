@@ -2,7 +2,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Poppins } from "next/font/google"
 import { Toaster } from "@/app/components/ui/sonner"
-import NextAuthProvider from "@/app/components/wrapper/NextAuthProvider"
+import NextAuthProvider from "@/app/components/shared/NextAuthProvider"
 
 
 const poppins = Poppins({

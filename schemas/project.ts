@@ -1,5 +1,5 @@
 import * as zod from "zod"
-import { ProjectPriority } from "@prisma/client"
+import { ProjectPriority, RoleControl } from "@prisma/client"
 
 export const ProjectSchema = zod.object({
     name: zod.string().min(1, {message: "Project name is required"}),
@@ -14,4 +14,14 @@ export const ProjectSchema = zod.object({
     startDate: zod.date({required_error: "Start date is required"}),
     endDate: zod.date({required_error: "End date is required"}),
     estimatedBudget: zod.string().min(1, { message: "Estimated budget is required" })
+})
+
+
+
+export const ProjectMemberSchema = zod.object({
+    username: zod.string().min(1, {message: "Username field is required"}),
+    roleControl: zod.nativeEnum(RoleControl),
+    roles: zod.object({
+        role: zod.string().min(1)
+    })
 })

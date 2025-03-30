@@ -8,7 +8,7 @@ import { findUsers } from '@/lib/actions/users/findUsers'
 // components
 import { LuX } from 'react-icons/lu'
 import { Input } from '@/app/components/ui/input'
-import SelectedSearchUser from '@/app/components/utils/SelectedSearchUser'
+import SelectedSearchUser from '@/app/components/shared/SelectedSearchUser'
 
 type PropsTypes = {
   isLoading: boolean

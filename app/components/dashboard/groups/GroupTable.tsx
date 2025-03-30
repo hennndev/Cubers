@@ -10,7 +10,7 @@ import { leaveGroup } from '@/lib/actions/groups/leaveGroup'
 import { removeGroup } from '@/lib/actions/groups/removeGroup'   
 // components
 import { Button } from '@/app/components/ui/button'
-import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
+import ModalConfirmButton from '@/app/components/shared/ModalConfirm'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table"
 
 

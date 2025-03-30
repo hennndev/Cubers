@@ -5,6 +5,9 @@ import { getProject } from '@/lib/actions/projects/getProject'
 import { LuPlus } from 'react-icons/lu'
 import { Button } from '@/app/components/ui/button'
 import PageHeader from '@/app/components/shared/PageHeader'
+import MembersTable from '@/app/components/project/members/MembersTable'
+import MembersTableHeader from '@/app/components/project/members/MembersTableHeader'
+import AddButtonModal from '@/app/components/project/members/AddButtonModal'
 
 type Props = {
   params: { projectId: string };
@@ -22,10 +25,12 @@ const ProjectMembers = () => {
   return (
     <section className='flex-1 pb-10'>
       <PageHeader title='Project Members' description='View and manage project members'>
-        <Button>
-          <LuPlus /> Add Member
-        </Button>
+        <AddButtonModal/>
       </PageHeader>
+      <section className='flex flex-col space-y-6 px-10 h-screen'>
+        <MembersTableHeader/>
+        <MembersTable/>
+      </section>
     </section>
   )
 }

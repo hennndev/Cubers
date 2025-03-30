@@ -3,10 +3,10 @@ import React from 'react'
 import { useSession } from 'next-auth/react'
 import { UserDataDetailTypes } from '@/types/next-env'
 // components
-import ProfileDetailHeader from '@/app/components/dashboard/profile/ProfileDetailHeader'
-import ProfileDetailWorkerInfo from '@/app/components/dashboard/profile/ProfileDetailWorkerInfo'
-import ProfileDetailStudentInfo from '@/app/components/dashboard/profile/ProfileDetailStudentInfo'
-import ProfileDetailPersonalInformation from '@/app/components/dashboard/profile/ProfileDetailPersonalInformation'
+import ProfileDetailHeader from '@/app/components/profile/ProfileDetailHeader'
+import ProfileDetailWorkerInfo from '@/app/components/profile/ProfileDetailWorkerInfo'
+import ProfileDetailStudentInfo from '@/app/components/profile/ProfileDetailStudentInfo'
+import ProfileDetailPersonalInformation from '@/app/components/profile/ProfileDetailPersonalInformation'
 
 type PropsTypes = {
   data: UserDataDetailTypes

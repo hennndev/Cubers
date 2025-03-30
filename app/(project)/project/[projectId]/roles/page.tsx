@@ -5,6 +5,8 @@ import { getProject } from '@/lib/actions/projects/getProject'
 import { LuPlus } from 'react-icons/lu'
 import { Button } from '@/app/components/ui/button'
 import PageHeader from '@/app/components/shared/PageHeader'
+import RolesTable from '@/app/components/project/roles/RolesTable'
+import RolesTableHeader from '@/app/components/project/roles/RolesTableHeader'
 
 type Props = {
   params: { projectId: string };
@@ -26,6 +28,10 @@ const ProjectRoles = () => {
           <LuPlus /> Add Role
         </Button>
       </PageHeader>
+      <section className='flex flex-col space-y-6 px-10 h-screen'>
+        <RolesTableHeader/>
+        <RolesTable/>
+      </section>
     </section>
   )
 }

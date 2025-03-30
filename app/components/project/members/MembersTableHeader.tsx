@@ -8,7 +8,7 @@ import { Input } from '@/app/components/ui/input'
 import { Button } from '@/app/components/ui/button'
 import { LuArrowUpAZ, LuListFilter } from 'react-icons/lu'
 
-const ProjectsTableHeader = () => {
+const MembersTableHeader = () => {
   const searchParams = useSearchParams()
   const queryQ = searchParams.get("q") || ""
   const [searchTerm, setSearchTerm] = useState<string>(queryQ)
@@ -43,7 +43,7 @@ const ProjectsTableHeader = () => {
           type='text'
           value={searchTerm}
           onChange={handleChange}
-          placeholder='Search for projects name, projects tags, and projects owner'
+          placeholder='Search for projects member by name'
           className='w-[500px]' />
         <Button variant="outline" size="icon">
           <LuArrowUpAZ />
@@ -55,4 +55,4 @@ const ProjectsTableHeader = () => {
     </section>
   )
 }
-export default ProjectsTableHeader
+export default MembersTableHeader

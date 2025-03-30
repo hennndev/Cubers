@@ -3,7 +3,7 @@ import { UserDataDetailTypes } from "@/types/next-env"
 // components
 import { LuLoader } from "react-icons/lu"
 import { Button } from "@/app/components/ui/button"
-import FormEditProfileDetail from "@/app/components/forms/FormEditProfileDetail"
+import FormEditStudentInfo from "@/app/components/profile/forms/FormEditStudentInfo"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/app/components/ui/dialog"
 
 type PropsTypes = {
@@ -12,7 +12,7 @@ type PropsTypes = {
   data: UserDataDetailTypes
 }
 
-const ModalEditProfileDetail = ({ open, setOpen, data }: PropsTypes) => {
+const ModalEditStudentInfo = ({ open, setOpen, data }: PropsTypes) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -23,7 +23,7 @@ const ModalEditProfileDetail = ({ open, setOpen, data }: PropsTypes) => {
             Make changes to your profile here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
-        <FormEditProfileDetail data={data} setIsLoading={setIsLoading} closeModal={() => setOpen(false)} />
+        <FormEditStudentInfo data={data} setIsLoading={setIsLoading} closeModal={() => setOpen(false)}/>
         <DialogFooter>
           <Button type="submit" form="submit-form" disabled={isLoading}>
             {isLoading && <LuLoader className="animate-spin" />}
@@ -35,4 +35,4 @@ const ModalEditProfileDetail = ({ open, setOpen, data }: PropsTypes) => {
   )
 }
 
-export default ModalEditProfileDetail
+export default ModalEditStudentInfo

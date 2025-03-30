@@ -214,10 +214,10 @@ model ProjectMember {
   createdAt        DateTime        @default(now())
   roleControl      RoleControl     @default(Member)
 
-  projectId        Int     
-  project          Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   username         String  
   user             User    @relation(fields: [username], references: [username], onDelete: Cascade)
+  projectId        Int     
+  project          Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   roles            ProjectRole[]
   tasks            ProjectTask[]
   taskComments     TaskComment[]

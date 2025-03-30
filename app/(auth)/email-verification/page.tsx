@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 import VerificationEmail from '@/app/components/auth/VerificationEmail'
 
 export const metadata = {
-  title: "Cubers | Email Verification"
+  title: "Cubers | Email Verification",
+  description: "Page for user to verification the email"
 }
 
 const EmailVerification = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {

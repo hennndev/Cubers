@@ -6,7 +6,7 @@ import { getGroups } from '@/lib/actions/groups/getGroups'
 // components
 import { LuPlus } from 'react-icons/lu'
 import { Button } from '@/app/components/ui/button'
-import PageHeader from '@/app/components/dashboard/PageHeader'
+import PageHeader from '@/app/components/shared/PageHeader'
 import GroupTable from '@/app/components/dashboard/groups/GroupTable'
 import GroupTableHeader from '@/app/components/dashboard/groups/GroupTableHeader'
 import { GroupsDataTypes } from '@/types/next-env'

@@ -3,13 +3,14 @@ import { getServerSession } from 'next-auth'
 import { FriendDataTypes } from '@/types/next-env'
 import { authOptions } from '@/lib/config/authOptions'
 import { getFriends } from '@/lib/actions/users/getFriends'
-import FriendsTable from '@/app/components/dashboard/friends/FriendsTable'
 // components
-import PageHeader from '@/app/components/dashboard/PageHeader'
+import PageHeader from '@/app/components/shared/PageHeader'
+import FriendsTable from '@/app/components/dashboard/friends/FriendsTable'
 import FriendsTableHeader from '@/app/components/dashboard/friends/FriendsTableHeader'
 
 export const metadata = {
-  title: "Cubers | Friends"
+  title: "Cubers | Friends",
+  description: "Page for friend list"
 }
 const Group = async () => {
   const session = await getServerSession(authOptions)

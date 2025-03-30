@@ -1,6 +1,6 @@
 import React from 'react'
 import { redirect } from 'next/navigation'
-import PageHeader from '@/app/components/dashboard/PageHeader'
+import PageHeader from '@/app/components/shared/PageHeader'
 import GroupForm from '@/app/components/dashboard/groups/GroupForm'
 
 export const metadata = {

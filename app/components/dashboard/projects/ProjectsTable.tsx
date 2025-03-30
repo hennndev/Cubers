@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react'
+import clsx from 'clsx'
 import { toast } from 'sonner'
 import { debounce } from 'lodash'
 import queryString from 'query-string'
@@ -8,10 +9,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { removeProject } from '@/lib/actions/projects/removeProject'
 // components
 import { Button } from '@/app/components/ui/button'
-import ModalConfirmButton from '@/app/components/utils/ModalConfirm'
+import ModalConfirmButton from '@/app/components/shared/ModalConfirm'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table"
 import { getProjects } from '@/lib/actions/projects/getProjects'
-import clsx from 'clsx'
 
 type PropsTypes = {
   data: any

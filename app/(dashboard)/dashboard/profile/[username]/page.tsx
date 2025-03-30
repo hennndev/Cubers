@@ -1,25 +1,31 @@
 import React from 'react'
-import { getServerSession } from 'next-auth'
-import PageHeader from '@/app/components/dashboard/PageHeader'
-import ProfileSidebar from '@/app/components/dashboard/profile/ProfileSidebar'
-import ProfileDetail from '@/app/components/dashboard/profile/ProfileDetail'
-import { getUser } from '@/lib/actions/users/getUser'
+import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { getUser } from '@/lib/actions/users/getUser'
 import { authOptions } from '@/lib/config/authOptions'
 import { UserDataDetailTypes } from '@/types/next-env'
+// components
+import PageHeader from '@/app/components/shared/PageHeader'
+import ProfileDetail from '@/app/components/profile/ProfileDetail'
+import ProfileSidebar from '@/app/components/profile/ProfileSidebar'
 
-export const metadata = {
-  title: "Cubers | Profile"
+type Props = {
+  params: { username: string };
+};
+
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+  const data = await getUser(params.username)
+  return {
+    title: `Cubers | ${data?.data?.name}`,
+    description: `Profile with username ${params.username}`
+  }
 }
 
 const Profile = async ({ params }: { params: { username: string } }) => {
-  // ambil session login
   const session = await getServerSession(authOptions)
-  //ambil dynamic paramnya
   const { username } = await params
-  //get user by username
   let user = await getUser(username)
-  //if user is undefined, param is replaced by session username
   if(!user?.data) {
     redirect(`/dashboard/profile/${session?.user.username}`)
   }
@@ -28,7 +34,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     <section className='flex-1 pb-10'>
       <PageHeader title='Profile' description='Your profile information and all detail that related' />
       <section className='flex px-10 space-x-8 min-h-screen'>
-        {/* <ProfileSidebar /> */}
+        <ProfileSidebar />
         <ProfileDetail data={user.data as unknown as UserDataDetailTypes}/>
       </section>
     </section>

@@ -1,9 +1,10 @@
+"use client"
 import React, { useState } from 'react'
 import { UserDataDetailTypes } from '@/types/next-env'
 // components
 import { LuPencil } from "react-icons/lu"
 import { Button } from '@/app/components/ui/button'
-import ModalEditProfile from '@/app/components/modal/ModalEditProfile'
+import ModalEditProfile from '@/app/components/profile/modals/ModalEditProfile'
 import { Avatar, AvatarFallback, AvatarImage } from '@/app/components/ui/avatar'
 
 type PropsTypes = {

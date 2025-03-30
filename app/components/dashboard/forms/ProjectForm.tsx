@@ -14,13 +14,13 @@ import { editProject } from '@/lib/actions/projects/editProject'
 import { createProject } from '@/lib/actions/projects/createProject'
 // components
 import { Input } from '@/app/components/ui/input'
-import ProjectTagsInput from './ProjectTagsInput'
 import { Button } from '@/app/components/ui/button'
 import { LuLoader, LuCalendar } from 'react-icons/lu'
 import { Calendar } from "@/app/components/ui/calendar"
 import { Textarea } from '@/app/components/ui/textarea'
-import ProjectFindMembersInput from './ProjectFindMembersInput'
+import ProjectTagsInput from '@/app/components/dashboard/projects/ProjectTagsInput'
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover"
+import ProjectFindMembersInput from '@/app/components/dashboard/projects/ProjectFindMembersInput'
 import { Form, FormField, FormItem, FormControl, FormMessage, FormDescription } from '@/app/components/ui/form'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/app/components/ui/select"
 
